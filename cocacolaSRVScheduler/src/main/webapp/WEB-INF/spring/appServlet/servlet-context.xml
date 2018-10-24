@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+    xmlns:cache="http://www.springframework.org/schema/cache"
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+     	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+		 http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	 <context:property-placeholder location="classpath:resources/junit/jdbc.properties,classpath:resources/junit/mybatis.properties" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- This is for the listener that is defined in the web.xml. -->
+	<beans:bean id="applicationContextProvider" class="com.ibm.ko.cds.services.appcontext.ApplicationContextProvider"></beans:bean>
+	
+	<context:component-scan base-package="com.ibm.ko.cds" />
+	
+	<!-- Adding the Quartz details -->
+	
+  <!-- ***************************************************************************** -->
+	<!-- quartz bean for Metrics logging Schedular -->
+	                                          
+	 
+	    <beans:bean name="metricsQuartzJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	          <beans:property name="jobClass" value="com.ibm.ko.cds.scheduler.MetricsQuartzJob" />
+	         <beans:property name="jobDataAsMap">
+	           <beans:map>
+	             <beans:entry key="metricsSchHelper" value-ref="metricsSchHelper" />
+	          </beans:map>
+	       </beans:property>
+	    </beans:bean>
+	     
+	    <beans:bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	         <beans:property name="jobDetail" ref="metricsQuartzJob" />
+	        <beans:property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT"/>
+	         <beans:property name="repeatInterval" value="150000" /> 
+        	 <beans:property name="startDelay" value="3000" /> 
+	    </beans:bean>
+	  
+	    <beans:bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	         <beans:property name="jobDetail" ref="metricsQuartzJob" />
+	         <beans:property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
+	         <beans:property name="cronExpression" value="0 0/1 * * * ?" /> 
+	   </beans:bean>
+	  
+	    <beans:bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	         <beans:property name="jobDetails">
+	             <beans:list>
+	                 <beans:ref bean="metricsQuartzJob" />
+	            </beans:list>
+	       </beans:property>
+	         <beans:property name="triggers">
+	             <beans:list>
+	                 <beans:ref bean="simpleTrigger" />
+	             </beans:list>
+	        </beans:property>
+	        <!-- Disabiling the Quartz update check for all time-->
+	         <beans:property name="quartzProperties">  
+                <beans:props>  
+            		<beans:prop key="org.quartz.scheduler.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="org.terracotta.quartz.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="net.sf.ehcache.util.UpdateChecker">true</beans:prop>  
+         		 </beans:props>  
+     		</beans:property>  
+	     </beans:bean>
+	  
+  
+	<!-- quartz bean for Deleting Processed files -->
+	 
+	    <beans:bean name="clearMetricsProcessedFilesQuartzJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	          <beans:property name="jobClass" value="com.ibm.ko.cds.scheduler.RemoveProcessedFileQuartzJob" />
+	          <beans:property name="jobDataAsMap">
+	           <beans:map>
+	             <beans:entry key="metricsSchHelper" value-ref="metricsSchHelper" />
+	          </beans:map>
+	          </beans:property>
+	    </beans:bean>
+	  
+	    <beans:bean id="processedFilesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	         <beans:property name="jobDetail" ref="clearMetricsProcessedFilesQuartzJob" />
+	         <beans:property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
+	         <beans:property name="cronExpression" value="0 57 23 * * ?" /> 
+	   </beans:bean>
+	  
+	    <beans:bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	         <beans:property name="jobDetails">
+	             <beans:list>
+	                 <beans:ref bean="clearMetricsProcessedFilesQuartzJob" />
+	            </beans:list>
+	       </beans:property>
+	         <beans:property name="triggers">
+	             <beans:list>
+	                 <beans:ref bean="processedFilesCronTrigger" />
+	             </beans:list>
+	        </beans:property>
+	        <!-- Disabiling the Quartz update check for all time-->
+	         <beans:property name="quartzProperties">  
+                <beans:props>  
+            		<beans:prop key="org.quartz.scheduler.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="org.terracotta.quartz.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="net.sf.ehcache.util.UpdateChecker">true</beans:prop>  
+         		 </beans:props>  
+     		</beans:property>  
+	     </beans:bean>
+	  
+	  <!-- quartz bean for Deleting Error files -->
+	 
+	    <beans:bean name="clearMetricsErrorFilesQuartzJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	          <beans:property name="jobClass" value="com.ibm.ko.cds.scheduler.RemoveErrorFileQuartzJob" />
+	          <beans:property name="jobDataAsMap">
+	           <beans:map>
+	             <beans:entry key="metricsSchHelper" value-ref="metricsSchHelper" />
+	          </beans:map>
+	          </beans:property>
+	    </beans:bean>
+	  
+	    <beans:bean id="errorFilesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	         <beans:property name="jobDetail" ref="clearMetricsErrorFilesQuartzJob" />
+	         <beans:property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
+	         <beans:property name="cronExpression" value="0 50 14 13 * ?" /> 
+	   </beans:bean>
+	  
+	    <beans:bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	         <beans:property name="jobDetails">
+	             <beans:list>
+	                 <beans:ref bean="clearMetricsErrorFilesQuartzJob" />
+	            </beans:list>
+	       </beans:property>
+	         <beans:property name="triggers">
+	             <beans:list>
+	                 <beans:ref bean="errorFilesCronTrigger" />
+	             </beans:list>
+	        </beans:property>
+	        <!-- Disabiling the Quartz update check for all time-->
+	         <beans:property name="quartzProperties">  
+                <beans:props>  
+            		<beans:prop key="org.quartz.scheduler.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="org.terracotta.quartz.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="net.sf.ehcache.util.UpdateChecker">true</beans:prop>  
+         		 </beans:props>  
+     		</beans:property>  
+	     </beans:bean>
+	  
+   <!-- ********************************************************************************************  -->
+  
+   <!-- Spring Quartz for janrain service -->
+	
+ <beans:bean name="janrainJobSchedularJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		
+		<beans:property name="jobClass" value="com.ibm.ko.cds.service.janrainIntegration.JanrainJobSchedularJob" />
+		<beans:property name="jobDataAsMap">
+			<beans:map>
+				<beans:entry key="janrainService"  value="com.ibm.ko.cds.service.janrainIntegration.JanrainService" />
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+	
+	 
+	<!-- <beans:bean id="janRainForETLSimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+
+		<beans:property name="jobDetail"  ref="janrainJobSchedularJob" />
+		<beans:property name="repeatInterval" value="30000" />
+		<beans:property name="startDelay" value="1000" />
+
+	</beans:bean>   -->
+
+	<!-- Cron Trigger, run every 5 seconds -->
+	 <beans:bean id="janrainForETLCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+
+		<beans:property name="jobDetail" ref="janrainJobSchedularJob" />
+		<!-- <beans:property name="cronExpression" value="0 0 04 * * ?" /> -->
+		<beans:property name="cronExpression" value="0 0/1 * 1/1 * ? *" />
+		 	
+
+	</beans:bean>
+
+	<beans:bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<beans:property name="jobDetails">
+			<beans:list>
+				<beans:ref bean="janrainJobSchedularJob" />
+			</beans:list>
+		</beans:property>
+
+		<beans:property name="triggers">
+			<beans:list>
+				<beans:ref bean="janrainForETLCronTrigger" />
+			</beans:list>
+		</beans:property>
+		
+	        <!-- Disabiling the Quartz update check feature-->
+	         <beans:property name="quartzProperties">  
+                <beans:props>   
+            		<beans:prop key="org.quartz.scheduler.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="org.terracotta.quartz.skipUpdateCheck">true</beans:prop> 
+            		<beans:prop key="net.sf.ehcache.util.UpdateChecker">true</beans:prop> 
+          		 </beans:props>  
+     		</beans:property> 
+	</beans:bean>  
+	
+	<!-- ***************************************************************************************************************************************  -->
+	
+
+  <beans:bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <beans:property name="driverClass" value="${jdbc.driverClassName}"/>
+        <beans:property name="jdbcUrl" value="${jdbc.url}"/>  
+        <beans:property name="user" value="${jdbc.username}"/>
+        <beans:property name="password" value="${jdbc.password}"/> 
+        <beans:property name="maxPoolSize" value="50"/>
+        <beans:property name="initialPoolSize" value="5"/>
+        <beans:property name="minPoolSize" value="1"/>
+        <beans:property name="maxStatements" value="200"/>
+        <beans:property name="acquireIncrement"  value="10"/>
+        <beans:property name="idleConnectionTestPeriod" value="10800"/>
+        <beans:property name="maxIdleTime" value="21600"/>        
+    </beans:bean>
+	
+	<!-- *******************************
+     ***** CACHE CONFIGURATION *****
+     ******************************* -->       
+     <cache:annotation-driven cache-manager="cacheManager" />         
+	<beans:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+	    <beans:property name="cacheManager" ref="ehcache"/>
+	    
+	</beans:bean>
+	<beans:bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+	    <beans:property name="configLocation" value="classpath:resources/cacheConfig/Ehcache.xml"/>
+	    <beans:property name="shared" value="true"/>
+	</beans:bean>
+	
+	<!-- Enabling proxy based transaction -->
+	
+  <!-- enable the configuration of transactional behavior based on annotations -->
+  <tx:annotation-driven transaction-manager="txManager"/>
+ <!-- a PlatformTransactionManager is still required -->
+  <beans:bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <!-- (this dependency is defined somewhere else) -->
+    <beans:property name="dataSource" ref="dataSource"/>
+  </beans:bean>
+	
+ 
+	<beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <beans:property name="dataSource" ref="dataSource" />
+        <beans:property name="configLocation" value="classpath:resources/mybatis/sqlmap-config.xml" />
+    </beans:bean>
+    
+    <!-- scan for mappers and let them be autowired --> 
+
+	 <beans:bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	 	<beans:property name="basePackage" value="com.ibm.ko.cds.dao,resources.mybatis" />
+	 </beans:bean>
+
+	<aop:aspectj-autoproxy/>
+	
+</beans:beans>

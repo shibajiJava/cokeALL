@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.etlstagging.EtlStaggingLoadDAO">
+
+  <resultMap id="sacHistoryMapper" type="TransactionHistory">
+ 	<result property="accountType" column="POINT_ACCOUNT_TYPE"/>
+    <result property="pointsQuanity" column="POINTS_QTY"/>
+    <result property="reasonCode" column="REASON_CD"/>
+    <result property="pointsSource" column="SOURCE_CD"/>
+    <result property="pointsType" column="CREDITTYPE"/>
+    <result property="promotionId" column="PROMOTION"/>
+    <result property="memberId" column="MEMBER_ID"/>
+    <result property="productID" column="PRODUCT_ID"/>
+    <result property="key" column="KEY"/>
+    <result property="stakeHolderId" column="STAKEHOLDER"/>
+    <result property="transactionTimeStampString" column="TRANS_DTM"/>
+    <result property="brandId" column="BRAND_ID"/>
+     <result property="clientTransId" column="CLIENT_TRANSACTION_ID"/>
+ </resultMap>
+ 
+<resultMap id="etlLoadTrackMapper" type="EtlLoadTracker">
+ 	<result property="processName" column="ETL_PROCESS_NAME"/>
+    <result property="targetTable" column="TARGET_TABLE"/>
+    <result property="status" column="STATUS_CD"/>
+</resultMap>
+ 
+<select id="getSACHistory" resultMap="sacHistoryMapper" parameterType="TransactionHistory" useCache="false" flushCache="true">
+	select KEY, TRANS_DTM, MEMBER_ID, POINT_ACCOUNT_TYPE, PROMOTION, POINTS_QTY, REASON_CD, STAKEHOLDER, BRAND_ID, PRODUCT_ID, CREDITTYPE, SOURCE_CD 
+	from CDSOSTG.CDSA_CREDIT_PROCESS
+</select>
+
+<select id="getSavingStarHistory" resultMap="sacHistoryMapper" parameterType="TransactionHistory" useCache="false" flushCache="true">
+	select KEY, TRANS_DTM, MEMBER_ID, POINT_ACCOUNT_TYPE, PROMOTION, POINTS_QTY, REASON_CD, STAKEHOLDER, BRAND_ID, PRODUCT_ID, CREDITTYPE, SOURCE_CD ,CLIENT_TRANSACTION_ID
+	from CDSOSTG.CDSA_CREDIT_PROCESS_POSC
+</select>
+ 
+<select id="getETLLoadStatus" resultMap="etlLoadTrackMapper" parameterType="EtlLoadTracker" useCache="false" flushCache="true">
+	select ETL_PROCESS_NAME,TARGET_TABLE,STATUS_CD from CDSOAUDIT.CDSO_ETL_LOAD_TRACKER
+</select>
+ 
+<update id="updateETLLoadStatus"  parameterType="EtlLoadTracker">
+	update CDSOAUDIT.CDSO_ETL_LOAD_TRACKER
+	set STATUS_CD = #{status}
+	where TARGET_TABLE = #{targetTable}
+</update>
+
+</mapper>

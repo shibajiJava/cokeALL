@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.common.SequenceNumberDAO">
+
+	<select id="getNextSequenceNumber"  resultType="java.math.BigInteger" parameterType="SequenceNumber" >
+		select ${sequenceName}.nextval from SYSIBM.SYSDUMMY1
+	
+	</select>
+	
+	<select id="getCurrentDBTime"  resultType="String">
+		select current_timestamp from SYSIBM.SYSDUMMY1
+	</select>
+	
+</mapper>

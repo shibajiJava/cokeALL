@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.codeRedemption.CodeRedemptionDAO">
+
+ <resultMap id="CodeRedemptionObjectMapper" type="CodeRedemptionHistory">
+    <result property="memberId" column="REDEM_MEMBER_ID"/>
+    <result property="transactionTimeStamp" column="REDEM_INSERT_DTM"/>
+    <result property="clientTransactionId" column="REDEM_CLIENT_TRANS_ID"/>
+    <result property="siteId" column="site_id"/>
+    <result property="siteName" column="site_name"/>
+    <result property="pointAccountName" column="account_name"/>
+    <result property="award" column="POINTS_QTY"/>
+    <result property="points" column="POINTS_QTY"/>
+    <result property="promotion" column="POINTS_PROMOTION"/>
+     <result property="clientTransactionIdPoints" column="POINTS_CLINET_TRANS_ID"/>    
+ </resultMap>
+ 
+ 
+ <select id="getCodeRedemptionInfo"  resultMap="CodeRedemptionObjectMapper" useCache="false" flushCache="true">
+	select  distinct r.member_id REDEM_MEMBER_ID,r.REDEMPTION_TRANS_ID,r.CLIENTTRANSACTION_ID REDEM_CLIENT_TRANS_ID ,r.REDEMPTION_DTM REDEM_INSERT_DTM,p.point_qty POINTS_QTY,p.promotion_id POINTS_PROMOTION,
+		p.client_trans_id POINTS_CLINET_TRANS_ID,acc.account_name account_name,ss.site_id, st.site_name
+		from redemption_trans r
+		full outer join point_trans p on p.client_trans_id = r.CLIENTTRANSACTION_ID 
+		and p.member_id=r.member_id
+		full outer join site_session ss on ss.session_id=r.session_id 
+		left outer join point_account_type acc on p.point_account_type= acc.point_account_type
+		left outer join  site st on st.site_id= ss.site_id
+		<where>
+			r.CLIENTTRANSACTION_ID is not null
+		<if test="lotId != null" >
+			and r.lot_id = #{lotId}
+		</if>
+		<if test="memberId != null" >
+			and r.member_id =#{memberId}
+		</if>
+		<if test="campaigned != null" >
+			and r.CAMPAIGN_ID = #{campaigned}
+		</if>
+		<if test="searchClientTransactionId != null" >
+			and r.CLIENTTRANSACTION_ID = #{searchClientTransactionId}
+		</if>
+		<if test="redemptionHistoryStartDate != null">
+			and r.REDEMPTION_DTM &gt;= #{redemptionHistoryStartDate}
+		</if>
+		<if test="redemptionHistoryEndDate != null">
+			and r.REDEMPTION_DTM &lt;=#{redemptionHistoryEndDate}
+		</if>
+		</where>
+		order by REDEM_INSERT_DTM desc
+		fetch first 1000 rows only
+</select>
+
+ </mapper>

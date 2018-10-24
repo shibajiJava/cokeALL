@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.activity.ActivityDAO">
+
+	<insert id="recordSessionInfo">
+		INSERT INTO
+		SITE_SESSION (SESSION_ID, SESSION_UUID, SESSION_DTM,
+		MEMBER_ID,
+		SITE_ID, IP_ADDRESS, USER_AGENT, REFERRER,
+		INSERT_DTM,CHANNEL)
+		VALUES
+		(session_id_seq.nextval,
+		#{sessionUUID},
+		#{sessionDate},
+		#{memberId},
+		#{siteId},		
+		#{ipAddress},
+		#{userAgent},
+		#{referring},
+		CURRENT_TIMESTAMP,
+		#{sessionChannel})
+	</insert>
+	<insert id="recordMemberSite">
+	
+		 MERGE INTO MEMBER_SITE AS MS
+		USING (VALUES (#{memberId},#{siteId})) AS MS2 (MEMBER_ID,SITE_ID)
+		ON (MS.MEMBER_ID=MS2.MEMBER_ID and MS.SITE_ID=MS2.SITE_ID)
+		WHEN MATCHED THEN
+		UPDATE
+		SET
+		MS.LAST_LOGIN=CURRENT_TIMESTAMP,	
+		MS.UPDATE_DTM=CURRENT_TIMESTAMP	
+		WHEN NOT MATCHED THEN
+		insert (MEMBER_ID, SITE_ID, FIRST_LOGIN,LAST_LOGIN,INSERT_DTM,UPDATE_DTM)
+		values (#{memberId}, #{siteId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	</insert>
+	<resultMap id="siteMap" type="Site">
+   		 <result property="siteId" column="SITE_ID"/>
+   		 <result property="memberId" column="MEMBER_ID"/>
+    	 <result property="lastLoginDate" column="LAST_LOGIN"/>
+    	 <result property="firstLoginDate" column="FIRST_LOGIN"/>    	
+    </resultMap> 
+	<select id="getMemberSiteRecord" resultMap="siteMap">
+		select MEMBER_ID, SITE_ID, FIRST_LOGIN, LAST_LOGIN
+		 from MEMBER_SITE where MEMBER_ID=#{memberId} and SITE_ID=#{siteId}
+	</select>
+	
+ <resultMap id="SessionSearchMapper" type="SessionSearch">
+    <result property="memberId" column="MEMBER_ID"/>
+    <result property="userAgent" column="USER_AGENT"/>
+    <result property="sessionChannel" column="CHANNEL"/>
+    <result property="siteId" column="SITE_ID"/>
+    <result property="sessionUUID" column="SESSION_UUID"/>
+    <result property="janrainUUID" column="UUID"/>
+    <result property="firstName" column="FIRST_NAME"/>
+    <result property="lastName" column="LAST_NAME"/>
+    <result property="ip" column="IP_ADDRESS"/>
+    <result property="siteName" column="SITE_NAME"/>
+ </resultMap>
+ 
+  <select id="searchSession"  resultMap="SessionSearchMapper" useCache="false" flushCache="true">
+	select distinct  ss.member_id,ss.site_id,ss.user_agent,ss.channel,ss.session_UUID,ss.ip_address,st.site_name,m.uuid,m.first_name,m.last_name,
+	ss.session_dtm from site_session ss
+	left join member m on m.member_id = ss.member_id
+	left join site st on st.site_id = ss.site_id
+	<where>
+		<if test="memberId != null" >
+			and ss.member_id  =#{memberId}
+		</if>
+		<if test="ipAddress != null" >
+			and ss.ip_address= #{ipAddress}
+		</if>
+		<if test="siteId != null" >
+			and ss.site_id = #{siteId}
+		</if>
+		<if test="searchSessionUUID != null" >
+			and ss.session_uuid = #{searchSessionUUID}
+		</if>
+		
+		<if test="sessionDateSearchStart != null">
+			and ss.session_dtm  &gt;= #{sessionDateSearchStart}
+		</if>
+		<if test="sessionDateSearchEnd != null">
+			and ss.session_dtm  &lt;= #{sessionDateSearchEnd}
+		</if>
+	</where>
+		order by ss.session_dtm desc
+		fetch first 300 rows only
+</select>
+</mapper>	

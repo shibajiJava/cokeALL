@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <!-- changes from the defaults -->
+       <setting name="lazyLoadingEnabled" value="false" />
+    </settings>
+    <typeAliases>
+        <typeAlias type="com.ibm.app.services.domain.UserData" alias="UserData"/>
+        <typeAlias type="com.ko.cds.request.member.MemberSearchRequest" alias="MemberSearchRequest"/>
+        <typeAlias type="com.ko.cds.pojo.member.MemberInfo" alias="MemberInfo"/>
+        <typeAlias type="com.ko.cds.pojo.member.Email" alias="Email"/>
+        <typeAlias type="com.ko.cds.pojo.member.Address" alias="Address"/>
+        <typeAlias type="com.ko.cds.pojo.member.PhoneNumber" alias="PhoneNumber"/>
+        <typeAlias type="com.ko.cds.pojo.member.MemberIdentifier" alias="MemberIdentifier"/>
+        <typeAlias type="com.ko.cds.pojo.member.SMSNumber" alias="SMSNumber"/>
+        <typeAlias type="com.ko.cds.pojo.member.MergedMember" alias="MergedMember"/>
+        <typeAlias type="com.ko.cds.pojo.member.CommunicationOptIn" alias="CommunicationOptIn"/>
+        <typeAlias type="com.ko.cds.request.activity.RecordSessionInfoRequest" alias="RecordSessionInfoRequest"/>
+        <typeAlias type="com.ko.cds.pojo.activity.SessionInfo" alias="SessionInfo"/>
+        <typeAlias type="com.ko.cds.request.survey.PostSurveyRequest" alias="PostSurveyRequest"/>
+        <typeAlias type="com.ko.cds.pojo.survey.SurveyTrans" alias="SurveyTrans"/> 
+        <typeAlias type="com.ko.cds.pojo.survey.SiteSession" alias="SiteSession"/>
+        <typeAlias type="com.ko.cds.pojo.survey.SurveyInfo" alias="SurveyInfo"/>
+        <typeAlias type="com.ko.cds.pojo.survey.Survey" alias="Survey"/>
+        <typeAlias type="com.ko.cds.pojo.survey.Question" alias="Question"/>
+        <typeAlias type="com.ko.cds.pojo.survey.Answer" alias="Answer"/> 
+        <typeAlias type="com.ko.cds.request.survey.GetSurveyRequest" alias="GetSurveyRequest"/>
+        <typeAlias type="com.ko.cds.request.question.PostQuestionRequest" alias="PostQuestionRequest"/>
+	 	<typeAlias type="com.ko.cds.pojo.common.SequenceNumber" alias="SequenceNumber"/> 
+        <typeAlias type="com.ko.cds.pojo.survey.OptPreference" alias="OptPreference"/>
+        <typeAlias type="com.ko.cds.request.survey.OptsRequest" alias="OptsRequest"/>
+        <typeAlias type="com.ko.cds.response.survey.GetOptsResponse" alias="GetOptsResponse"/>
+        <typeAlias type="com.ko.cds.pojo.activity.ActivityTrans" alias="ActivityTrans"/>
+        <typeAlias type="com.ko.cds.pojo.activity.TagObject" alias="TagObject"/>
+        <typeAlias type="com.ko.cds.pojo.points.AccountBalancePK" alias="AccountBalancePK"/>
+        <typeAlias type="com.ko.cds.pojo.points.PointAccountBalance" alias="PointAccountBalance"/>
+        <typeAlias type="com.ko.cds.pojo.points.PointAccountType" alias="PointAccountType"/>
+        <typeAlias type="com.ko.cds.pojo.points.TransactionHistory" alias="TransactionHistory"/>
+        <typeAlias type="com.ko.cds.request.points.PointsBalanceRequest" alias="PointsBalanceRequest"/>
+        <typeAlias type="com.ko.cds.response.points.PointsBalanceResponse" alias="PointsBalanceResponse"/>
+        <typeAlias type="com.ko.cds.request.points.PointsHistoryRequest" alias="PointsHistoryRequest"/>
+        <typeAlias type="com.ko.cds.response.points.PointsHistoryResponse" alias="PointsHistoryResponse"/>
+        <typeAlias type="com.ko.cds.pojo.points.PointsHistory" alias="PointsHistory"/>
+        <typeAlias type="com.ko.cds.pojo.points.HoldTypeTransactionBean" alias="HoldTypeTransactionBean"/>
+        <typeAlias type="com.ko.cds.pojo.member.MergeMemberInfo" alias="MergeMemberInfo"/>
+        <typeAlias type="com.ko.cds.pojo.activity.RedemptionTrans" alias="RedemptionTrans"/> 
+        <typeAlias type="com.ko.cds.request.activity.RecordRedemptionRequest" alias="RecordRedemptionRequest"/>
+        <typeAlias type="com.ko.cds.response.record.RecordRedemptionResponse" alias="RecordRedemptionResponse"/>
+        <typeAlias type="com.ko.cds.pojo.config.ReasonCode" alias="ReasonCode"/>
+        <typeAlias type="com.ko.cds.request.member.UpdateMemberRequest" alias="UpdateMemberRequest"/>
+        <typeAlias type="com.ko.cds.pojo.member.MemberDomainProfile" alias="MemberDomainProfile"/>
+        <typeAlias type="com.ko.cds.pojo.member.Client" alias="Client"/>
+        <typeAlias type="com.ko.cds.pojo.member.LegalAcceptances" alias="LegalAcceptances"/>
+        <typeAlias type="com.ko.cds.pojo.csr.CSRMemberInfo" alias="CSRMemberInfo"/>
+        <typeAlias type="com.ko.cds.request.csr.CSRAdvanceSearchRequest" alias="CSRAdvanceSearchRequest"/>
+        <typeAlias type="com.ko.cds.pojo.csr.Site" alias="Site"/>
+        <typeAlias type="com.ko.cds.pojo.csr.CodeRedemptionHistory" alias="CodeRedemptionHistory"/>
+         <typeAlias type="com.ko.cds.request.csr.DeleteMemberRequest" alias="DeleteMemberRequest"/>
+         <typeAlias type="com.ko.cds.pojo.points.PointsHistory" alias="PointsHistory"/>
+         <typeAlias type="com.ko.cds.pojo.csr.ActivitySearch" alias="ActivitySearch"/>
+         <typeAlias type="com.ko.cds.pojo.csr.SessionSearch" alias="SessionSearch"/>
+         <typeAlias type="com.ko.cds.request.csr.CSRTicketPostRequest" alias="CSRTicketPostRequest"/>
+         <typeAlias type="com.ko.cds.request.csr.CSRTicketGetRequest" alias="CSRTicketGetRequest"/>
+         <typeAlias type="com.ko.cds.pojo.csr.CSRTicket" alias="CSRTicket"/>
+         <typeAlias type="com.ko.cds.pojo.janrainIntegration.CdsoProfileInterest" alias="CdsoProfileInterest"/>
+        <typeAlias type="com.ko.cds.pojo.janrainIntegration.CdsoProfileInterestDtl" alias="CdsoProfileInterestDtl"/>
+        <typeAlias type="com.ko.cds.dao.common.GenerateMetricsReportDAO" alias="GenerateMetricsReportDAO"/>
+        <typeAlias type="com.ko.cds.request.points.CreditPointRequest" alias="CreditPointRequest"/>
+        <typeAlias type="com.ko.cds.etlstagging.EtlLoadTracker" alias="EtlLoadTracker"/>
+        <typeAlias type="com.ko.cds.pojo.member.MemberSocialDomain" alias="MemberSocialDomain"/>
+        <typeAlias type="com.ko.cds.request.points.PointsBalanceRequestV2" alias="PointsBalanceRequestV2"/>
+        <typeAlias type="com.ko.cds.response.points.PointsBalanceResponseV2" alias="PointsBalanceResponseV2"/>
+        <typeAlias type="com.ko.cds.pojo.points.AccountBalance" alias="AccountBalance"/>
+         <typeAlias type="com.ko.cds.pojo.points.StatusLevels" alias="StatusLevels"/>
+          <typeAlias type="com.ko.cds.pojo.points.AccountConfiguration" alias="AccountConfiguration"/>
+          <typeAlias type="com.ko.cds.request.member.MemberSearchRequestV2" alias="MemberSearchRequestV2"/>
+         <typeAlias type="com.ko.cds.request.admin.survey.PostSurveyAdminRequest" alias="PostSurveyAdminRequest"/>
+         <typeAlias type="com.ko.cds.request.admin.survey.PostSurveyQuestionAdminRequest" alias="PostSurveyQuestionAdminRequest"/>
+         <typeAlias type="com.ko.cds.request.admin.survey.QuestionIdS" alias="QuestionIdS"/>
+         <typeAlias type="com.ko.cds.request.admin.survey.PostSurveyQuestionIDAdmin" alias="PostSurveyQuestionIDAdmin"/>
+        <typeAlias type="com.ko.cds.pojo.admin.survey.SurveyTransAdmin" alias="SurveyTransAdmin"/> 
+        <typeAlias type="com.ko.cds.pojo.admin.survey.SiteSessionAdmin" alias="SiteSessionAdmin"/>
+        <typeAlias type="com.ko.cds.pojo.admin.survey.SurveyInfoAdmin" alias="SurveyInfoAdmin"/>
+        <typeAlias type="com.ko.cds.pojo.admin.survey.SurveyAdmin" alias="SurveyAmdin"/>
+        <typeAlias type="com.ko.cds.pojo.admin.survey.QuestionAdmin" alias="QuestionAdmin"/>
+        <typeAlias type="com.ko.cds.pojo.admin.survey.QuestionIdAdmin" alias="QuestionIdAdmin"/>
+        <typeAlias type="com.ko.cds.pojo.admin.survey.AnswerAdmin" alias="AnswerAdmin"/> 
+        <typeAlias type="com.ko.cds.pojo.admin.survey.SurveyQuestionAdminId" alias="SurveyQuestionAdminId"/> 
+        <typeAlias type="com.ko.cds.pojo.admin.site.UpdateAdminSite" alias="UpdateAdminSite"/>
+        <typeAlias type="com.ko.cds.response.admin.site.GetSiteAdminResponse" alias="GetSiteAdminResponse"/>
+        <typeAlias type="com.ko.cds.response.admin.site.GetSiteAdminResponseList" alias="GetSiteAdminResponseList"/>
+        <typeAlias type="com.ko.cds.response.admin.answer.GetAnswerAdminResponse" alias="GetAnswerAdminResponse"/>
+        <typeAlias type="com.ko.cds.response.admin.answer.GetAnswerAdminResponseList" alias="GetAnswerAdminResponseList"/>
+         <typeAlias type="com.ko.cds.response.admin.question.GetQuestionAdminResponse" alias="GetQuestionAdminResponse"/>
+        <typeAlias type="com.ko.cds.response.admin.question.GetQuestionAdminResponseList" alias="GetQuestionAdminResponseList"/>
+        <typeAlias type="com.ko.cds.request.admin.question.GetQuestionAdminRequest" alias="GetQuestionAdminRequest"/>
+    </typeAliases>
+    <mappers>
+   		 
+   		  <mapper resource="resources/mybatis/memberDAOMapper.xml" />
+   		  <mapper resource="resources/mybatis/sessionDAOMapper.xml" />
+   		  <mapper resource="resources/mybatis/postSurveyDAOMapper.xml"/>
+   		  <mapper resource="resources/mybatis/getSessionIDDAOMapper.xml"/>
+   		  <mapper resource="resources/mybatis/questionDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/sequenceDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/bunchBallDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/pointAccountDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/configDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/codeRedemptionDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/csrTicketDAO.xml"/>
+		  <mapper resource="resources/mybatis/generateMetricReportDAOMapper.xml"/>
+		  <mapper resource="resources/mybatis/etlStaggingLoadDAOMapper.xml"/> 
+		  <mapper resource="resources/mybatis/postSurveyAdminDAOMapper.xml"/> 
+    </mappers>
+</configuration>

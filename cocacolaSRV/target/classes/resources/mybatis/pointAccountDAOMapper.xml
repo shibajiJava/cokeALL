@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.points.PointAccountDAO">
+ <resultMap id="accountTypeMapper" type="PointAccountType">
+ 	<id property="pointAccountType" column="POINT_ACCOUNT_TYPE"/>
+    <result property="expirationDays" column="POINT_EXPIRATION_DAYS"/>
+    <result property="weekCreditLimitQty" column="WEEK_CREDIT_LIMIT_QTY"/>
+    <result property="balanceLimitQty" column="BALANCE_LIMIT_QTY"/>
+    <result property="weekBonusLimitQty" column="WEEK_BONUS_LIMIT_QTY"/>
+    <result property="yearCreditLimitQty" column="YEAR_CREDIT_LIMIT_QTY"/>
+    <result property="dailyCreditLimitQty" column="DAILY_CREDIT_LIMIT_QTY"/>
+    <result property="dailyBonusLimitQty" column="DAILY_BONUS_LIMIT_QTY"/>
+    	<result property="level_1_name" column="level_1_name" />
+		<result property="level_1_limit" column="level_1_limit" />
+		
+		<result property="level_2_name" column="level_2_name" />
+		<result property="level_2_limit" column="level_2_limit" />
+		
+		<result property="level_3_name" column="level_3_name" />
+		<result property="level_3_limit" column="level_3_limit" />
+		
+		<result property="level_4_name" column="level_4_name" />
+		<result property="level_4_limit" column="level_4_limit" />
+		
+		<result property="level_5_name" column="level_5_name" />
+		<result property="level_5_limit" column="level_5_limit" />
+ </resultMap>
+  <resultMap id="accountDetailMapper" type="PointAccountBalance">
+ 	<result property="pointAccountType" column="POINT_ACCOUNT_TYPE"/>
+    <result property="memberId" column="MEMBER_ID"/>
+    <result property="pointBalance" column="POINT_BALANCE"/>
+    <result property="weekCreditQty" column="WEEK_CREDIT_QTY"/>
+    <result property="weekBonusCreditQty" column="WEEK_BONUS_CREDIT_QTY"/>
+    <result property="dailyCreditQty" column="DAILY_CREDIT_QTY"/>
+    <result property="dailyBonusCreditQty" column="DAILY_BONUS_CREDIT_QTY"/>
+    <result property="yearlyCreditQty" column="YEARLY_CREDIT_QTY"/> 
+    <result property="lastActivityDt" column="LAST_ACTIVITY_DTM"/> 
+    <result property="insertDt" column="INSERT_DTM"/>    
+ </resultMap>
+ <resultMap id="pointHistoryMapper" type="TransactionHistory">
+    <result property="pointTransId" column="POINT_TRANS_ID"/>
+ 	<result property="accountType" column="POINT_ACCOUNT_TYPE"/>
+    <result property="pointsQuanity" column="POINT_QTY"/>
+    <result property="reasonCode" column="REASON_CD"/>
+    <result property="transactionType" column="TRANS_TYPE_CD"/>
+    <result property="pointsSource" column="SOURCE_CD"/>
+    <result property="pointsType" column="POINT_TYPE_CD"/>
+    <result property="holdTime" column="HOLD_TIME"/>
+    <result property="relatedTransactionId" column="RELATEDTRANSACTION_ID"/>
+    <result property="clientTransId" column="CLIENT_TRANS_ID"/>
+    <result property="promotionId" column="PROMOTION_ID"/>
+    <result property="memberId" column="MEMBER_ID"/>
+    <result property="sessionId" column="SESSION_ID"/>
+    <result property="productID" column="BEV_PROD_CD"/>
+    <result property="itemId" column="ITEM_ID"/>
+    <result property="stakeHolderId" column="STAKEHOLDER_ID"/>
+    <result property="insertDt" column="INSERT_DTM"/>
+    <result property="transactionTimeStampString" column="TRANS_DTM"/>
+    <result property="Balance" column="BALANCE"/>
+    <result property="brandId" column="BRAND_CD"/>
+ </resultMap>
+ 
+ <resultMap id="pointHistoryMapperforHold" type="HoldTypeTransactionBean">
+    <result property="pointTransId" column="POINT_TRANS_ID"/>
+ 	<result property="accountType" column="POINT_ACCOUNT_TYPE"/>
+    <result property="pointsQuanity" column="POINT_QTY"/>
+    <result property="pointsType" column="POINT_TYPE_CD"/>
+    <result property="relatedTransactionId" column="RELATEDTRANSACTION_ID"/>
+    <result property="memberId" column="MEMBER_ID"/>
+    <result property="insertDate" column="INSERT_DTM"/>
+    <result property="lastTransactionDate" column="TRANS_DTM"/>
+    <result property="balance" column="BALANCE"/>
+    <result property="brandId" column="BRAND_CD"/>
+    <result property="holdTime" column="HOLD_TIME"/>
+ </resultMap>
+
+<select id="getAccountType"  resultMap="accountTypeMapper" parameterType="string">
+	SELECT POINT_ACCOUNT_TYPE,
+		   POINT_EXPIRATION_DAYS,
+		   WEEK_CREDIT_LIMIT_QTY, 
+		   BALANCE_LIMIT_QTY, 
+		   WEEK_BONUS_LIMIT_QTY, 
+		   YEAR_CREDIT_LIMIT_QTY, 
+		   DAILY_CREDIT_LIMIT_QTY,
+		   DAILY_BONUS_LIMIT_QTY,
+		   level_1_name,level_1_limit,level_2_name,level_2_limit,level_3_name,level_3_limit,level_4_name,level_4_limit
+		,level_5_name,level_5_limit
+		   from "POINT_ACCOUNT_TYPE"
+		   WHERE POINT_ACCOUNT_TYPE=#{accountType}
+</select>
+<select id="getAccountDetails"  resultMap="accountDetailMapper" parameterType="AccountBalancePK" useCache="false" flushCache="true">
+	select POINT_ACCOUNT_TYPE, 
+		   MEMBER_ID, 
+		   POINT_BALANCE, 
+		   WEEK_CREDIT_QTY, 
+		   WEEK_BONUS_CREDIT_QTY,
+		   DAILY_CREDIT_QTY,
+		   DAILY_BONUS_CREDIT_QTY,
+		   YEARLY_CREDIT_QTY
+		   from "MEMBER_ACCOUNT_BALANCE"
+		   WHERE POINT_ACCOUNT_TYPE=#{pointAccountType}
+		   and MEMBER_ID=#{memberId}
+</select>
+<insert id="insertAccountBalance"  parameterType="PointAccountBalance">
+	insert into "MEMBER_ACCOUNT_BALANCE" (POINT_ACCOUNT_TYPE, MEMBER_ID, POINT_BALANCE, LAST_ACTIVITY_DTM, WEEK_CREDIT_QTY, INSERT_DTM, WEEK_BONUS_CREDIT_QTY,DAILY_CREDIT_QTY,DAILY_BONUS_CREDIT_QTY,YEARLY_CREDIT_QTY,STATUS_LEVEL) 
+				values (#{pointAccountType}, #{memberId}, #{pointBalance}, CURRENT_TIMESTAMP,#{weekCreditQty} , CURRENT_TIMESTAMP, #{weekBonusCreditQty},#{dailyCreditQty},#{dailyBonusCreditQty},#{yearlyCreditQty},#{statusLevel})
+</insert>
+<update id="updateAccountBalance"  parameterType="PointAccountBalance">
+	UPDATE "MEMBER_ACCOUNT_BALANCE"
+	SET POINT_BALANCE=#{pointBalance},
+	LAST_ACTIVITY_DTM=CURRENT_TIMESTAMP,
+	UPDATE_DTM=CURRENT_TIMESTAMP,
+	STATUS_LEVEL = #{statusLevel}
+	<choose>
+    	<when test="creditOrDebitType  == 'Regular'">
+    		,WEEK_CREDIT_QTY=#{weekCreditQty},
+    		DAILY_CREDIT_QTY=#{dailyCreditQty},
+    		YEARLY_CREDIT_QTY=#{yearlyCreditQty}
+    	</when>
+		<when test="creditOrDebitType  == 'Bonus'">
+    		,WEEK_BONUS_CREDIT_QTY=#{weekBonusCreditQty},
+    		DAILY_BONUS_CREDIT_QTY=#{dailyBonusCreditQty},
+    		YEARLY_CREDIT_QTY=#{yearlyCreditQty}
+    	</when>
+    	<when test="creditOrDebitType  == 'Admin'">
+    		,YEARLY_CREDIT_QTY=#{yearlyCreditQty}
+    	</when>
+	 </choose>
+	 WHERE   MEMBER_ID =#{memberId} and POINT_ACCOUNT_TYPE=#{pointAccountType} 	 
+</update>
+<update id="updateAccountBalanceForMerge"  parameterType="PointAccountBalance">
+	UPDATE "MEMBER_ACCOUNT_BALANCE"
+	SET POINT_BALANCE=#{pointBalance},
+	LAST_ACTIVITY_DTM=#{lastActivityDt},
+	UPDATE_DTM=CURRENT_TIMESTAMP,
+   	WEEK_CREDIT_QTY=#{weekCreditQty},
+    DAILY_CREDIT_QTY=#{dailyCreditQty},
+    YEARLY_CREDIT_QTY=#{yearlyCreditQty},
+    WEEK_BONUS_CREDIT_QTY=#{weekBonusCreditQty},
+    DAILY_BONUS_CREDIT_QTY=#{dailyBonusCreditQty},
+    STATUS_LEVEL = #{statusLevel}
+	 WHERE   MEMBER_ID =#{memberId} and POINT_ACCOUNT_TYPE=#{pointAccountType} 	 
+</update>
+<insert id="insertAccountBalanceForMerge"  parameterType="PointAccountBalance">
+	insert into "MEMBER_ACCOUNT_BALANCE" (POINT_ACCOUNT_TYPE, MEMBER_ID, POINT_BALANCE, LAST_ACTIVITY_DTM, WEEK_CREDIT_QTY, INSERT_DTM, WEEK_BONUS_CREDIT_QTY,DAILY_CREDIT_QTY,DAILY_BONUS_CREDIT_QTY,YEARLY_CREDIT_QTY,UPDATE_DTM,STATUS_LEVEL) 
+				values (#{pointAccountType}, #{memberId}, #{pointBalance}, #{lastActivityDt},#{weekCreditQty} , #{insertDt}, #{weekBonusCreditQty},#{dailyCreditQty},#{dailyBonusCreditQty},#{yearlyCreditQty},current_timestamp,#(statusLevel))
+</insert>
+<insert id="insertTransactionHistory"  parameterType="TransactionHistory">
+	insert into "POINT_TRANS" (POINT_TRANS_ID, BEV_PROD_CD, RELATEDTRANSACTION_ID, SESSION_ID, POINT_ACCOUNT_TYPE, MEMBER_ID, REASON_CD, TRANS_TYPE_CD, SOURCE_CD, POINT_TYPE_CD, TRANS_DTM, INSERT_DTM, CLIENT_TRANS_ID, PROMOTION_ID, STAKEHOLDER_ID, POINT_QTY,HOLD_TIME,ITEM_ID,BALANCE,BRAND_CD,POINT_LEVEL) 
+		values (#{pointTransId},#{productID,jdbcType=VARCHAR},#{relatedTransactionId,jdbcType=VARCHAR},#{sessionId,jdbcType=VARCHAR},#{accountType},#{memberId},#{reasonCode},#{transactionType},#{pointsSource,jdbcType=VARCHAR},#{pointsType},#{transactionTimeStampString},CURRENT_TIMESTAMP,#{clientTransId,jdbcType=VARCHAR},#{promotionId,jdbcType=VARCHAR},#{stakeHolderId,jdbcType=VARCHAR},#{pointsQuanity},#{holdTime,jdbcType=VARCHAR},#{itemId},#{Balance},#{brandId,jdbcType=VARCHAR},#{statusLevel})
+</insert>
+<select id="getPointHistory"  resultMap="pointHistoryMapper" parameterType="java.math.BigInteger" useCache="false" flushCache="true">
+	select POINT_TRANS_ID,
+		   POINT_ACCOUNT_TYPE, 
+		   POINT_QTY, 
+		   REASON_CD, 
+		   TRANS_TYPE_CD, 
+		   SOURCE_CD, 
+		   POINT_TYPE_CD, 
+		   HOLD_TIME, 
+		   RELATEDTRANSACTION_ID, 
+		   CLIENT_TRANS_ID, 
+		   PROMOTION_ID, 
+		   MEMBER_ID, 
+		   SESSION_ID, 
+		   BEV_PROD_CD, 
+		   ITEM_ID, 
+		   BALANCE,
+		   STAKEHOLDER_ID,
+		   BRAND_CD 
+		   from "POINT_TRANS"
+		   WHERE POINT_TRANS_ID=#{transactionId}
+		   
+</select>
+<select id="getPointHistoryByTransactionIdWithLock"  resultMap="pointHistoryMapper" parameterType="java.math.BigInteger" useCache="false" flushCache="true">
+	select POINT_TRANS_ID,
+		   POINT_ACCOUNT_TYPE, 
+		   POINT_QTY, 
+		   REASON_CD, 
+		   TRANS_TYPE_CD, 
+		   SOURCE_CD, 
+		   POINT_TYPE_CD, 
+		   HOLD_TIME, 
+		   RELATEDTRANSACTION_ID, 
+		   CLIENT_TRANS_ID, 
+		   PROMOTION_ID, 
+		   MEMBER_ID, 
+		   SESSION_ID, 
+		   BEV_PROD_CD, 
+		   ITEM_ID,
+		   BALANCE, 
+		   STAKEHOLDER_ID,
+		   BRAND_CD 
+		   from "POINT_TRANS"
+		   WHERE POINT_TRANS_ID=#{transactionId}
+</select>
+<select id="getAccountDetailsWithLock"  resultMap="accountDetailMapper" parameterType="AccountBalancePK" useCache="false" flushCache="true">
+	select POINT_ACCOUNT_TYPE, 
+		   MEMBER_ID, 
+		   POINT_BALANCE, 
+		   WEEK_CREDIT_QTY, 
+		   WEEK_BONUS_CREDIT_QTY,
+		   DAILY_CREDIT_QTY,
+		   DAILY_BONUS_CREDIT_QTY,
+		   YEARLY_CREDIT_QTY
+		   from "MEMBER_ACCOUNT_BALANCE"
+		   WHERE POINT_ACCOUNT_TYPE=#{pointAccountType}
+		   and MEMBER_ID=#{memberId}
+</select>
+
+<resultMap type="PointsBalanceResponse" id="pointsBalanceMapper">
+	<result property="totalBalance" column="POINT_BALANCE" />
+	<result property="weeklyRegularBalance" column="WEEK_CREDIT_QTY" />
+	<result property="weeklyRegularLimit" column="WEEK_CREDIT_LIMIT_QTY" />
+	<result property="pointsExpirationDate" column="POINTS_EXP_DATE" />
+	<result property="weeklyBalanceTotal" column="WEEK_BAL_TOTAL" />
+	<result property="memberId" column="MEMBER_ID" />
+</resultMap>
+
+	<select id="getPointsBalance" resultMap="pointsBalanceMapper">
+	   SELECT mab.POINT_BALANCE,
+		mab.WEEK_CREDIT_QTY,
+		pat.WEEK_CREDIT_LIMIT_QTY,
+		(mab.LAST_ACTIVITY_DTM + pat.POINT_EXPIRATION_DAYS DAYS) as POINTS_EXP_DATE,
+		(mab.WEEK_CREDIT_QTY + mab.WEEK_BONUS_CREDIT_QTY) as WEEK_BAL_TOTAL,
+		mab.MEMBER_ID
+ 	   FROM "POINT_ACCOUNT_TYPE" pat
+       LEFT OUTER JOIN "MEMBER_ACCOUNT_BALANCE" mab
+	   ON pat.POINT_ACCOUNT_TYPE = mab.POINT_ACCOUNT_TYPE  and mab.MEMBER_ID = #{memberId} 
+	   WHERE pat.POINT_ACCOUNT_TYPE = #{accountType} and mab.MEMBER_ID in (select MEMBER_ID from cdsousr.member where MEMBER_ID = #{memberId}  and MEMBER_STATUS_CD='Active') 
+		
+	</select>
+	
+	<select id="getAccountDetailsByMemberId"  resultMap="accountDetailMapper" parameterType="java.math.BigInteger">
+	select POINT_ACCOUNT_TYPE, 
+		   MEMBER_ID, 
+		   POINT_BALANCE, 
+		   WEEK_CREDIT_QTY, 
+		   WEEK_BONUS_CREDIT_QTY,
+		   DAILY_CREDIT_QTY,
+		   DAILY_BONUS_CREDIT_QTY,
+		   YEARLY_CREDIT_QTY,
+		   LAST_ACTIVITY_DTM,
+		   INSERT_DTM
+		   from "MEMBER_ACCOUNT_BALANCE"
+		   WHERE MEMBER_ID=#{memberId}
+</select>
+<update id="updatePointHistory" parameterType="TransactionHistory">
+	UPDATE "POINT_TRANS"
+	SET SESSION_ID=#{sessionId},
+	POINT_TYPE_CD=#{pointsType},
+	TRANS_DTM=#{transactionTimeStampString},	
+	HOLD_TIME=#{holdTime},
+	CLIENT_TRANS_ID=#{clientTransId}
+	WHERE POINT_TRANS_ID=#{pointTransId}
+</update>
+<select id="getPointHistoryByMemberId"  resultMap="pointHistoryMapper" parameterType="java.math.BigInteger" useCache="false" flushCache="true">
+	select POINT_TRANS_ID,
+		   POINT_ACCOUNT_TYPE, 
+		   POINT_QTY, 
+		   REASON_CD, 
+		   TRANS_TYPE_CD, 
+		   TRANS_DTM,
+		   INSERT_DTM,
+		   SOURCE_CD, 
+		   TRANS_DTM,
+		   POINT_TYPE_CD, 
+		   HOLD_TIME, 
+		   RELATEDTRANSACTION_ID, 
+		   CLIENT_TRANS_ID, 
+		   PROMOTION_ID, 
+		   MEMBER_ID, 
+		   SESSION_ID, 
+		   BEV_PROD_CD, 
+		   ITEM_ID, 
+		   BALANCE,
+		   STAKEHOLDER_ID,
+		   BRAND_CD 
+		   from "POINT_TRANS"
+		   WHERE MEMBER_ID=#{memberId}
+		   
+</select>
+<insert id="insertTransactionHistoryByMemberId"  parameterType="TransactionHistory">
+	insert into "POINT_TRANS" (POINT_TRANS_ID,BEV_PROD_CD,RELATEDTRANSACTION_ID,SESSION_ID,POINT_ACCOUNT_TYPE, 
+	MEMBER_ID, REASON_CD,TRANS_TYPE_CD,SOURCE_CD,POINT_TYPE_CD,TRANS_DTM,INSERT_DTM,CLIENT_TRANS_ID,PROMOTION_ID,STAKEHOLDER_ID, 
+	POINT_QTY,HOLD_TIME,ITEM_ID,BRAND_CD,POINT_LEVEL) 
+	values (#{pointTransId},#{productID,jdbcType=VARCHAR},#{relatedTransactionId,jdbcType=VARCHAR},#{sessionId},
+	#{accountType},#{memberId},#{reasonCode},#{transactionType},#{pointsSource,jdbcType=VARCHAR},#{pointsType},CURRENT_TIMESTAMP,
+	CURRENT_TIMESTAMP,#{clientTransId,jdbcType=VARCHAR},#{promotionId,jdbcType=VARCHAR},#{stakeHolderId,jdbcType=VARCHAR},
+	#{pointsQuanity},#{holdTime,jdbcType=VARCHAR},#{itemId},#{brandId,jdbcType=VARCHAR},#{statusLevel})
+</insert>
+
+ <insert id="insertTransactionHistoryForMerge"  parameterType="TransactionHistory">
+ 	insert into "POINT_TRANS" (POINT_TRANS_ID,BEV_PROD_CD,RELATEDTRANSACTION_ID,SESSION_ID,POINT_ACCOUNT_TYPE, 
+	MEMBER_ID, REASON_CD,TRANS_TYPE_CD,SOURCE_CD,POINT_TYPE_CD,TRANS_DTM,INSERT_DTM,CLIENT_TRANS_ID,PROMOTION_ID,STAKEHOLDER_ID, 
+	POINT_QTY,HOLD_TIME,ITEM_ID,BALANCE,BRAND_CD) 
+	values (#{pointTransId},#{productID,jdbcType=VARCHAR},#{relatedTransactionId,jdbcType=VARCHAR},#{sessionId},
+	#{accountType},#{memberId},#{reasonCode},#{transactionType},#{pointsSource,jdbcType=VARCHAR},#{pointsType},#{transactionTimeStampString},
+	#{insertDt},#{clientTransId,jdbcType=VARCHAR},#{promotionId,jdbcType=VARCHAR},#{stakeHolderId,jdbcType=VARCHAR},
+	#{pointsQuanity},#{holdTime,jdbcType=VARCHAR},#{itemId},#{Balance},#{brandId,jdbcType=VARCHAR})	
+</insert> 
+
+
+<select id="getAccountDetailsByMemberIdWithLock"  resultMap="accountDetailMapper" parameterType="AccountBalancePK" useCache="false" flushCache="true">
+	select POINT_ACCOUNT_TYPE, 
+		   MEMBER_ID, 
+		   POINT_BALANCE, 
+		   WEEK_CREDIT_QTY, 
+		   WEEK_BONUS_CREDIT_QTY,
+		   DAILY_CREDIT_QTY,
+		   DAILY_BONUS_CREDIT_QTY,
+		   YEARLY_CREDIT_QTY
+		   from "MEMBER_ACCOUNT_BALANCE"
+		   WHERE MEMBER_ID=#{memberId}
+</select>
+
+<resultMap type="PointsHistory" id="pointsHistoryMapper">
+		<result property="transactionDate" column="TRANS_DTM" />
+		<result property="transactionType" column="TRANS_TYPE_CD" />
+		<result property="pointsType" column="POINT_TYPE_CD" />
+		<result property="points" column="POINT_QTY" />
+		<result property="reasonCode" column="REASON_CD" />
+		<result property="reasonDescription" column="REASON_DESC" />
+		<result property="productId" column="BEV_PROD_CD" />
+		<result property="itemId" column="ITEM_ID" />
+		<result property="promotion" column="PROMOTION_ID" />
+		<result property="clientTransactionId" column="CLIENT_TRANS_ID"/>
+    	<result property="Balance" column="BALANCE"/>
+   		<result property="pointsSource" column="SOURCE_CD"/>
+   		<result property="brandId" column="BRAND_CD"/>
+   		<result property="pointLevel" column="POINT_LEVEL"/>
+</resultMap>
+
+
+<select id="getPointsHistory" resultMap="pointsHistoryMapper">
+select 
+	TRANS_DTM,
+	LCASE(TRANS_TYPE_CD) as TRANS_TYPE_CD,
+	COALESCE(POINT_TYPE_CD,'Regular') as POINT_TYPE_CD,
+	POINT_QTY,
+	REASON_CD,
+	REASON_DESC,
+	BEV_PROD_CD,
+	ITEM_ID,
+	BALANCE,
+	BRAND_CD,
+	SOURCE_CD,
+	CLIENT_TRANS_ID,
+	PROMOTION_ID,
+	POINT_LEVEL
+	from (
+select ptTrans.TRANS_DTM,
+	ptTrans.TRANS_TYPE_CD,
+	ptTrans.POINT_TYPE_CD,
+	ptTrans.POINT_QTY,
+	reason.REASON_CD,
+	reason.REASON_DESC,
+	ptTrans.BEV_PROD_CD,
+	ptTrans.ITEM_ID,
+	ptTrans.PROMOTION_ID,
+	ptTrans.BALANCE,
+	ptTrans.BRAND_CD,
+	ptTrans.SOURCE_CD,
+	ptTrans.POINT_LEVEL,
+	ptTrans.CLIENT_TRANS_ID,
+	ROW_NUMBER() OVER(ORDER BY TRANS_DTM 
+		<choose>		
+			<when test="ascending == true ">ASC</when>		
+			<otherwise>DESC</otherwise>
+		</choose>
+	) AS rowNumber
+	from (
+		select * from point_trans where member_id = #{memberId}
+		and POINT_ACCOUNT_TYPE = #{accountType} and (point_type_cd is NULL or point_type_cd not in ('Hold' ,'RolledBack','Rolledback')) 
+		<if test="reasonCode != null">
+			and REASON_CD = #{reasonCode} and REASON_CD != ('Bonus Transfer')
+		</if>
+		<if test="startDateTime != null and endDateTime != null">
+			and TRANS_DTM between #{startDateTime} and #{endDateTime}
+		</if>
+	) ptTrans inner join
+	REASON reason on
+	ptTrans.REASON_CD = reason.REASON_CD and ptTrans.REASON_CD != ('Bonus Transfer')
+	fetch first 300 rows only
+) as temp_table
+	<if test="offset != null and limit != null">
+		<where>
+				rowNumber between #{offset} and #{limit}
+		</where>
+	</if>
+	order by TRANS_DTM
+		<choose>		
+			<when test="ascending == true ">ASC</when>		
+			<otherwise>DESC</otherwise>
+		</choose>
+</select>
+
+<!-- SQL for the Rollback  -->
+<update id="updateHoldPointTypeHistory"  parameterType="HoldTypeTransactionBean">
+	UPDATE "POINT_TRANS"
+	SET 
+	POINT_TYPE_CD=#{pointsType},
+	BALANCE = #{balance},
+	POINT_LEVEL = #{statusLevel},
+	TRANS_DTM = #{lastTransactionDate}
+	WHERE POINT_TRANS_ID=#{pointTransId}
+</update>
+<select id="getHoldTypeTransactionRecords"  resultMap="pointHistoryMapperforHold" parameterType="java.lang.String" useCache="false" flushCache="true">
+	select POINT_TRANS_ID,
+		   POINT_ACCOUNT_TYPE, 
+		   POINT_QTY, 
+		   POINT_TYPE_CD, 
+		   RELATEDTRANSACTION_ID, 
+		   MEMBER_ID, 
+		   TRANS_DTM,
+		   BALANCE,
+		   INSERT_DTM,
+		   BRAND_CD,
+		   HOLD_TIME
+		   from "POINT_TRANS"
+		   WHERE POINT_TYPE_CD=#{pointsType}
+		   AND INSERT_DTM + HOLD_TIME SECOND  &lt;= CURRENT_TIMESTAMP
+</select>
+
+<select id="getCurrentDBTime" resultType="java.sql.Timestamp" >
+	SELECT current_timestamp FROM sysibm.sysdummy1
+</select>
+
+
+<!-- <select id="getPointsOLDHistory" resultMap="pointsHistoryMapper">
+select 
+	TRANS_DTM,
+	LCASE(TRANS_TYPE_CD) as TRANS_TYPE_CD,
+	COALESCE(POINT_TYPE_CD,'Regular') as POINT_TYPE_CD,
+	POINT_QTY,
+	REASON_CD,
+	REASON_DESC,
+	BEV_PROD_CD,
+	ITEM_ID,
+	BALANCE,
+	BRAND_CD,
+	SOURCE_CD,
+	CLIENT_TRANS_ID,
+	PROMOTION_ID
+	from (
+select ptTrans.TRANS_DTM,
+	ptTrans.TRANS_TYPE_CD,
+	ptTrans.POINT_TYPE_CD,
+	ptTrans.POINT_QTY,
+	reason.REASON_CD,
+	reason.REASON_DESC,
+	ptTrans.BEV_PROD_CD,
+	ptTrans.ITEM_ID,
+	ptTrans.PROMOTION_ID,
+	ptTrans.BALANCE,
+	ptTrans.BRAND_CD,
+	ptTrans.SOURCE_CD,
+	ptTrans.CLIENT_TRANS_ID,
+	ROW_NUMBER() OVER(ORDER BY TRANS_DTM 
+		<choose>		
+			<when test="ascending == true ">ASC</when>		
+			<otherwise>DESC</otherwise>
+		</choose>
+	) AS rowNumber
+	from (
+		select * from point_trans_history where member_id = #{memberId}
+		and POINT_ACCOUNT_TYPE = #{accountType} and (point_type_cd is NULL or point_type_cd not in ('Hold' ,'RolledBack','Rolledback')) 
+		<if test="reasonCode != null">
+			and REASON_CD = #{reasonCode}
+		</if>
+		<if test="startDateTime != null and endDateTime != null">
+			and TRANS_DTM between #{startDateTime} and #{endDateTime}
+		</if>
+	) ptTrans inner join
+	REASON reason on
+	ptTrans.REASON_CD = reason.REASON_CD
+	fetch first 300 rows only
+) as temp_table
+	<if test="offset != null and limit != null">
+		<where>
+				rowNumber between #{offset} and #{limit}
+		</where>
+	</if>
+	order by TRANS_DTM
+		<choose>		
+			<when test="ascending == true ">ASC</when>		
+			<otherwise>DESC</otherwise>
+		</choose>
+</select>  -->
+
+<insert id="logCDSACreditProcessDetails"  parameterType="TransactionHistory">
+	insert into CDSOAUDIT.AUDIT_LOG_CDSA_CREDIT_PROCESS (KEY,PRODUCT_ID,POINT_ACCOUNT_TYPE, MEMBER_ID, REASON_CD,SOURCE_CD, CREDITTYPE, TRANS_DTM, INSERT_DTM,  PROMOTION, STAKEHOLDER, POINTS_QTY,BRAND_ID,ERROR_DETAIL,CLIENT_TRANSACTION_ID) 
+		values (#{key},#{productID,jdbcType=VARCHAR},#{accountType},#{memberId},#{reasonCode},#{pointsSource,jdbcType=VARCHAR},#{pointsType},#{transactionTimeStampString},CURRENT_TIMESTAMP,#{promotionId,jdbcType=VARCHAR},#{stakeHolderId,jdbcType=VARCHAR},#{pointsQuanity},#{brandId,jdbcType=VARCHAR},#{errorDetail},#{clientTransId})
+</insert>
+
+
+<resultMap type="PointsBalanceResponseV2" id="pointsBalanceMapperV2">
+	<result property="memberId" column="MEMBER_ID" />
+	<collection property="accountBalaces" ofType="AccountBalance">
+		<result property="totalBalance" column="POINT_BALANCE" />
+		<result property="weeklyRegularBalance" column="WEEK_CREDIT_QTY" />
+		<result property="weeklyRegularLimit" column="WEEK_CREDIT_LIMIT_QTY" />
+		<result property="pointsExpirationDate" column="POINTS_EXP_DATE" />
+		<result property="pointAccountType" column="POINT_ACCOUNT_TYPE" />
+		<result property="pointAccountTypeName" column="account_name" />
+		<result property="statusLevel" column="status_level" />
+		<result property="weeklyBalanceTotal" column="WEEK_BAL_TOTAL" />
+	</collection>
+	<collection property="accountConfiguration" ofType="AccountConfiguration">
+		<result property="pointAccountType" column="POINT_ACCOUNT_TYPE" />
+		<result property="pointAccountTypeName" column="account_name" />
+		
+		<result property="level_1_name" column="level_1_name" />
+		<result property="level_1_limit" column="level_1_limit" />
+		
+		<result property="level_2_name" column="level_2_name" />
+		<result property="level_2_limit" column="level_2_limit" />
+		
+		<result property="level_3_name" column="level_3_name" />
+		<result property="level_3_limit" column="level_3_limit" />
+		
+		<result property="level_4_name" column="level_4_name" />
+		<result property="level_4_limit" column="level_4_limit" />
+		
+		<result property="level_5_name" column="level_5_name" />
+		<result property="level_5_limit" column="level_5_limit" />
+		
+	</collection>
+</resultMap>
+
+
+	<select id="getPointsBalanceV2" resultMap="pointsBalanceMapperV2">
+	   SELECT mab.POINT_BALANCE,
+		mab.WEEK_CREDIT_QTY,
+		mab.status_level,
+		mab.MEMBER_ID,
+		pat.POINT_ACCOUNT_TYPE,
+		pat.account_name,
+		pat.WEEK_CREDIT_LIMIT_QTY,
+		(mab.LAST_ACTIVITY_DTM + pat.POINT_EXPIRATION_DAYS DAYS) as POINTS_EXP_DATE,
+		(mab.WEEK_CREDIT_QTY + mab.WEEK_BONUS_CREDIT_QTY) as WEEK_BAL_TOTAL,
+		mab.MEMBER_ID,
+		pat.level_1_name,pat.level_1_limit,pat.level_2_name,pat.level_2_limit,pat.level_3_name,pat.level_3_limit,pat.level_4_name,pat.level_4_limit
+		,pat.level_5_name,pat.level_5_limit
+ 	   FROM "POINT_ACCOUNT_TYPE" pat
+       LEFT OUTER JOIN "MEMBER_ACCOUNT_BALANCE" mab
+	   ON pat.POINT_ACCOUNT_TYPE = mab.POINT_ACCOUNT_TYPE  
+	   where  mab.MEMBER_ID = #{memberId}
+	</select>
+	
+	<select id="getPointsBalanceV2ForNewMember" resultMap="pointsBalanceMapperV2">
+	  SELECT mab.POINT_BALANCE,
+		mab.WEEK_CREDIT_QTY,
+		pat.WEEK_CREDIT_LIMIT_QTY,pat.POINT_ACCOUNT_TYPE,pat.account_name,
+		(mab.LAST_ACTIVITY_DTM + pat.POINT_EXPIRATION_DAYS DAYS) as POINTS_EXP_DATE,
+		(mab.WEEK_CREDIT_QTY + mab.WEEK_BONUS_CREDIT_QTY) as WEEK_BAL_TOTAL,
+		pat.level_1_name,pat.level_1_limit,pat.level_2_name,pat.level_2_limit,pat.level_3_name,pat.level_3_limit,pat.level_4_name,pat.level_4_limit
+		,pat.level_5_name,pat.level_5_limit,
+		mab.MEMBER_ID
+ 	   FROM cdsousr.POINT_ACCOUNT_TYPE pat
+       LEFT OUTER JOIN cdsousr.MEMBER_ACCOUNT_BALANCE mab
+	   ON pat.POINT_ACCOUNT_TYPE = mab.POINT_ACCOUNT_TYPE  and mab.MEMBER_ID = #{memberId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,1330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.member.MemberDAO">
+
+    <resultMap id="memberMapper" type="MemberInfo">
+        <id property="memberId" column="MEMBER_ID"/>
+        <result property="uuid" column="UUID"/>
+        <result property="title" column="TITLE"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="middleName" column="MIDDLE_NAME"/>
+        <result property="lastName" column="LAST_NAME"/>
+        <result property="displayName" column="DISPLAY_NAME"/>
+        <result property="alias" column="ALIAS"/>
+        <result property="suffix" column="SUFFIX"/>
+        <result property="birthday" column="BIRTH_DT"/>
+        <result property="genderCode" column="GENDER_CD"/>
+        <result property="country" column="COUNTRY_CD"/>
+        <result property="languageCode" column="LANGUAGE_CD"/>                    
+        <result property="memberStatus" column="MEMBER_STATUS_CD"/>
+        <result property="memberType" column="MEMBER_TYPE_CD"/>
+        <!-- 
+       <association property="emailAddress" javaType="Email">
+    		<result property="memberId" column="EMAIL_ID"/>
+   		    <result property="statusCode" column="EMAIL_STATUS_CD"/>
+   			<result property="primaryIndicator" column="EMAIL_PRIMARY_IND"/>
+   			<result property="email" column="EMAIL_ADDRESS"/>
+       </association>
+        -->
+       <result property="emailAddress" column="EMAIL_ADDRESS"/>
+       
+       <collection property="smsNumbers" ofType="SMSNumber">
+   			<result property="smsNumber" column="SMS_NUMBER"/>
+   			<result property="smsType" column="SMS_NUMBER_TYPE"/>
+       </collection>
+      <collection property="addresses" ofType="Address">
+   		 <result property="memberId" column="ADDRESS_MEMBER_ID"/>
+    	 <result property="streetAddress1" column="STREET_ADDRESS_1"/>
+    	 <result property="streetAddress2" column="STREET_ADDRESS_2"/>
+    	 <result property="postalCode" column="POSTAL_CD"/>
+    	 <result property="country" column="ADDRESS_COUNTRY_CD"/>
+    	 <result property="addressType" column="ADDRESS_TYPE"/>
+    	 <result property="city" column="CITY"/>
+    	 <result property="state" column="STATE_CD"/>
+     </collection>   
+     <collection property="phoneNumbers" ofType="PhoneNumber">
+   		 <id property="phoneNumberId" column="PHONE_ID"/>
+   		 <result property="memberId" column="PHONE_MEMBER_ID"/>
+    	 <result property="countryCode" column="PHONE_COUNTRY_CD"/>
+    	 <result property="phoneType" column="PHONE_TYPE_CD"/>
+    	 <result property="primaryIndicator" column="PHONE_PRIMARY_IND"/>
+    	 <result property="statusCode" column="PHONE_STATUS_CD"/>
+    	 <result property="phoneNumber" column="PHONE_NUMBER"/>    	
+     </collection>
+     <collection property="memberIdentifiers" ofType="MemberIdentifier">
+   		 <result property="domainName" column="DOMAIN_NAME"/>
+    	 <result property="memberId" column="IDENTIFIER_MEMBER_ID"/>
+    	 <result property="statusCode" column="IDENTIFIER_STATUS_CD"/>
+    	 <result property="userId" column="USER_ID"/>    	
+     </collection>     
+    <collection property="socialProfiles" ofType="TagObject">
+   		 <result property="name" column="SOCIAL_DOMAIN_NAME"/>
+    	 <result property="value" column="SOCIAL_DISPLAY_NAME"/>    	
+     </collection> 
+           
+          <!-- added for MCR-17802 -->
+     <collection property="socialDomain" ofType="MemberSocialDomain">
+	  	 <result property="domain" column="SD_DOMAIN_NAME"/>
+	   	 <result property="userName" column="SD_DISPLAY_NAME"/>
+	   	 <result property="identifier" column="SD_IDENTIFIER"/>
+    </collection> 
+    	 <!-- added for MCR-17802 -->
+    </resultMap>
+    
+	<resultMap id="smsMapper" type="SMSNumber">
+		<id property="memberId" column="MEMBER_ID"/>
+		<result property="smsNumber" column="SMS_NUMBER"/>
+		<result property="alias" column="ALIAS"/>
+		<result property="insertDt" column="INSERT_DTM"/>
+		<result property="updateDt" column="UPDATE_DTM"/>
+		<result property="smsType" column="SMS_NUMBER_TYPE"/>
+		
+	</resultMap>
+ 
+ 	<resultMap type="MemberIdentifier" id="identifierMapper">
+ 		<id property="memberId" column="MEMBER_ID"/>
+ 		<result property="userId" column="USER_ID"/>
+ 		<result property="domainName" column="DOMAIN_NAME"/>
+ 		<result property="statusCode" column="STATUS_CD"/>	
+ 	</resultMap>
+ 	
+ 	<resultMap type="Email" id="emailMapper">
+ 		<id property="memberId" column="MEMBER_ID"/>
+ 		<id property="email" column="EMAIL_ADDRESS"/>
+ 		<id property="statusCode" column="STATUS_CD"/>
+ 		<id property="primaryIndicator" column="PRIMARY_IND"/>
+ 	</resultMap>
+	
+	<resultMap type="MemberDomainProfile" id="memberDomainProfileMapper">
+ 		<id property="profileId" column="PROFILE_ID"/>
+ 		<id property="domainName" column="DOMAIN_NAME"/>
+ 		<id property="memberId" column="MEMBER_ID"/>
+ 		<id property="insertDt" column="INSERT_DTM"/>
+ 		<id property="updateDt" column="UPDATE_DTM"/>
+ 	</resultMap>
+	
+	<select id="searchMemberInfo"  resultMap="memberMapper" flushCache="true">
+		SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.TITLE as TITLE,
+		m.FIRST_NAME as FIRST_NAME,
+		m.MIDDLE_NAME as MIDDLE_NAME,
+		m.LAST_NAME as LAST_NAME ,
+		m.DISPLAY_NAME as DISPLAY_NAME,
+		m.ALIAS as ALIAS,
+		m.SUFFIX as SUFFIX,
+		m.BIRTH_DT as BIRTH_DT,
+		m.GENDER_CD as GENDER_CD,
+		m.COUNTRY_CD as COUNTRY_CD,
+		m.LANGUAGE_CD as LANGUAGE_CD,
+		m.MEMBER_STATUS_CD as MEMBER_STATUS_CD,
+		m.MEMBER_TYPE_CD as MEMBER_TYPE_CD,
+		email.MEMBER_ID as EMAIL_ID,
+		email.STATUS_CD as EMAIL_STATUS_CD,
+		email.PRIMARY_IND as EMAIL_PRIMARY_IND,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		address.MEMBER_ID  as ADDRESS_MEMBER_ID, 
+		address.STREET_ADDRESS_1 as STREET_ADDRESS_1,
+		address.STREET_ADDRESS_2 as STREET_ADDRESS_2,
+		address.POSTAL_CD as POSTAL_CD,
+		address.COUNTRY_CD as ADDRESS_COUNTRY_CD,
+		address.ADDRESS_TYPE as ADDRESS_TYPE,
+		address.CITY as CITY,
+		address.STATE_CD as STATE_CD,
+		phones.PHONE_NUMBER_ID as PHONE_ID,
+		phones.MEMBER_ID as PHONE_MEMBER_ID,
+		phones.PHONE_COUNTRY_CD as PHONE_COUNTRY_CD,
+		phones.PHONE_TYPE_CD as PHONE_TYPE_CD,
+		phones.PRIMARY_IND as PHONE_PRIMARY_IND,
+		phones.STATUS_CD as PHONE_STATUS_CD, 
+		phones.PHONE_NUMBER as PHONE_NUMBER,
+		smsNumber.MEMBER_ID as SMS_MEMBER_ID,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		smsNumber.SMS_NUMBER_TYPE as SMS_NUMBER_TYPE,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.MEMBER_ID as IDENTIFIER_MEMBER_ID,
+		memberIdentifier.STATUS_CD as IDENTIFIER_STATUS_CD,
+		memberIdentifier.USER_ID as USER_ID,
+		memberdomain.DOMAIN_NAME as SOCIAL_DOMAIN_NAME,
+  		memberdomain.DISPLAY_NAME as SOCIAL_DISPLAY_NAME
+		
+		   
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID and email.PRIMARY_IND = 'Y'
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID
+		left join MEMBER_IDENTIFIER as memberIdentifier
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID
+		left join MEMBER_DOMAIN_PROFILE as memberdomain
+		on m.member_id=memberdomain.MEMBER_ID
+		
+		<if test="memberStatus == null" >
+			where m.MEMBER_STATUS_CD='Active'
+		</if>
+		<if test="memberStatus != null" >
+			where m.MEMBER_STATUS_CD=#{memberStatus}
+		</if>
+		<choose>
+	    	<when test="searchParameterName  == 'janrainUUID'">
+	    		and m.UUID=#{searchParameterValue}
+	    	</when>
+			<when test="searchParameterName  == 'smsNumber'">
+	   			and m.MEMBER_ID IN (SELECT member_id FROM cdsousr.member_sms_number WHERE sms_number=#{searchParameterValue})
+			</when>
+			<when test="searchParameterName  == 'memberId'">
+	    		and m.MEMBER_ID=#{searchParameterValue}
+	    	</when>
+			<when test="searchParameterName  == 'email'">
+	    		and UPPER(email.EMAIL_ADDRESS)=UPPER(#{searchParameterValue})
+	    	</when>
+	    	<otherwise>
+	    		and m.MEMBER_ID IN (select member_id from MEMBER_IDENTIFIER where USER_ID=#{searchParameterValue} and DOMAIN_NAME=#{searchParameterName} )
+	    	    <!-- 
+	    	    and memberIdentifier.USER_ID=#{searchParameterValue}
+	    	    and memberIdentifier.DOMAIN_NAME=#{searchParameterName} -->
+	    	</otherwise>
+    	</choose>
+	</select>
+	
+	<insert id="insertMemberDomainProfile" parameterType="MemberDomainProfile">
+		insert into "MEMBER_DOMAIN_PROFILE" (PROFILE_ID,DOMAIN_NAME,MEMBER_ID,INSERT_DTM,UPDATE_DTM) 
+		values (#{profileId},#{domainName,jdbcType=VARCHAR},#{memberId},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	</insert>
+	
+	<insert id="insertMemberInfo" parameterType="MemberInfo">	
+		insert into "MEMBER" (MEMBER_ID, FIRST_NAME, LAST_NAME,BIRTH_DT, COUNTRY_CD,
+ 		LANGUAGE_CD, TITLE, MIDDLE_NAME, MEMBER_STATUS_CD, MEMBER_TYPE_CD, UUID, DISPLAY_NAME,INSERT_DTM,GENDER_CD, CREATE_DTM, ALIAS, SUFFIX) 
+  		values (#{memberId},#{firstName,jdbcType=VARCHAR}, #{lastName,jdbcType=VARCHAR},#{birthday},
+   		#{country,jdbcType=VARCHAR}, #{languageCode,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR} ,#{middleName,jdbcType=VARCHAR}, #{memberStatus,jdbcType=VARCHAR}, #{memberType,jdbcType=VARCHAR}, #{uuid,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR},CURRENT_TIMESTAMP,#{genderCode,jdbcType=VARCHAR},CURRENT_TIMESTAMP, #{alias,jdbcType=VARCHAR}, #{suffix,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertEmail" parameterType="Email">
+		insert into "MEMBER_EMAIL" (MEMBER_ID, STATUS_CD, INSERT_DTM,PRIMARY_IND, EMAIL_ADDRESS)
+		values (#{memberId}, #{statusCode,jdbcType=VARCHAR}, CURRENT_TIMESTAMP,#{primaryIndicator,jdbcType=VARCHAR}, #{email})
+	</insert>
+	<insert id="insertAddress" parameterType="Address">
+		insert into "MEMBER_ADDRESS" (STREET_ADDRESS_1, STREET_ADDRESS_2, POSTAL_CD, COUNTRY_CD, ADDRESS_TYPE, MEMBER_ID, INSERT_DTM, CITY, STATE_CD)
+		values (#{streetAddress1,jdbcType=VARCHAR},#{streetAddress2,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR},#{addressType,jdbcType=VARCHAR} ,#{memberId}, CURRENT_TIMESTAMP,#{city,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertPhoneNumber" parameterType="PhoneNumber">
+		insert into "MEMBER_PHONE_NUMBERS" (PHONE_TYPE_CD, PHONE_NUMBER, PRIMARY_IND, MEMBER_ID, PHONE_COUNTRY_CD, INSERT_DTM,STATUS_CD, PHONE_NUMBER_ID)
+		values (#{phoneType,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{primaryIndicator,jdbcType=VARCHAR},#{memberId} , #{countryCode,jdbcType=VARCHAR}, CURRENT_TIMESTAMP,#{statusCode,jdbcType=VARCHAR}, PHONE_NUMBER_ID_SEQ.nextval)
+	</insert>	
+	<insert id="insertSMSNumber" parameterType="SMSNumber">
+		insert into "MEMBER_SMS_NUMBER" (SMS_NUMBER, STATUS_CD, MEMBER_ID,INSERT_DTM, SMS_NUMBER_TYPE)
+ 		values (#{smsNumber}, #{statusCode,jdbcType=VARCHAR}, #{memberId},CURRENT_TIMESTAMP, #{smsType})
+	</insert>
+	<insert id="insertSMSNumberForMerge" parameterType="SMSNumber">
+		insert into "MEMBER_SMS_NUMBER" (SMS_NUMBER, STATUS_CD, MEMBER_ID,INSERT_DTM, SMS_NUMBER_TYPE)
+ 		values (#{smsNumber}, #{statusCode,jdbcType=VARCHAR}, #{memberId},CURRENT_TIMESTAMP, #{smsType})
+	</insert>
+	<insert id="insertMemberIdentifier" parameterType="MemberIdentifier">
+		insert into "MEMBER_IDENTIFIER" (USER_ID, MEMBER_ID, DOMAIN_NAME, STATUS_CD,INSERT_DTM)
+		values (#{userId}, #{memberId}, #{domainName}, #{statusCode,jdbcType=VARCHAR}, CURRENT_TIMESTAMP)
+	</insert>
+	<insert id="insertMergedMember" parameterType="MergedMember">
+		insert into MERGED_MEMBERS (MERGED_FROM, MERGED_TO, INSERT_DTM) values
+		(#{mergedFrom}, #{mergedTo}, CURRENT_TIMESTAMP)
+	</insert>
+	
+	<select id="fetchSMSNumber" parameterType="java.math.BigInteger" resultMap="smsMapper">
+		SELECT SMS_NUMBER, STATUS_CD, MEMBER_ID, SMS_NUMBER_TYPE
+		 from MEMBER_SMS_NUMBER where MEMBER_ID=#{memberId}
+	</select> 	
+	<select id="fetchIdentifier"  parameterType="java.math.BigInteger" resultMap="identifierMapper">
+		select USER_ID, MEMBER_ID, DOMAIN_NAME, STATUS_CD
+		from MEMBER_IDENTIFIER where MEMBER_ID = #{memberId}		
+	</select>
+	
+	<select id="fetchEmail"  parameterType="java.math.BigInteger" resultMap="emailMapper">
+		select MEMBER_ID, STATUS_CD, PRIMARY_IND, EMAIL_ADDRESS
+		from MEMBER_EMAIL where MEMBER_ID = #{memberId}		
+	</select>
+
+	<select id="getMemberInfo" parameterType="java.math.BigInteger" resultMap="memberMapper">
+		SELECT MEMBER_ID, FIRST_NAME, 
+		LAST_NAME, PASSWORD, SOURCE_CD, BIRTH_DT, COUNTRY_CD, LANGUAGE_CD, TITLE, MIDDLE_NAME, 
+		MEMBER_STATUS_CD, MEMBER_TYPE_CD, UUID, DISPLAY_NAME, 
+		GENDER_CD, ALIAS, SUFFIX from MEMBER where MEMBER_ID=#{memberId} and MEMBER_STATUS_CD='Active'
+	</select>
+	
+	 <update id="updateStatusOfSMSNUmber">
+		UPDATE MEMBER_SMS_NUMBER set STATUS_CD=#{0} where member_id=#{1}
+	</update> 
+	<update id="updateStatusOfEmail">
+		UPDATE MEMBER_EMAIL set STATUS_CD=#{0} where member_id=#{1}
+	</update>
+<!-- 	<update id="updateStatusOfOpts">
+		UPDATE MEMBER_COMMUNICATION_OPT set STATUS_CD=#{0} where member_id=#{1}
+	</update> -->
+	<update id="updateStatusOfIdentifier">
+		UPDATE MEMBER_IDENTIFIER set STATUS_CD=#{0} where member_id=#{1}
+	</update> 
+	
+	<update id="updateMemberStatus">
+		UPDATE MEMBER set MEMBER_STATUS_CD=#{0}, STATUS_UPDATE_DTM=CURRENT_TIMESTAMP,UPDATE_DTM=CURRENT_TIMESTAMP WHERE MEMBER_ID=#{1}
+	</update>
+	<update id="updateMemberSMSStatus">
+		UPDATE MEMBER_SMS_NUMBER set STATUS_CD=#{0}, UPDATE_DTM=CURRENT_TIMESTAMP WHERE MEMBER_ID=#{1}
+	</update>
+	<update id="updateMemberIdentifierStatus">
+		UPDATE MEMBER_IDENTIFIER set STATUS_CD=#{0}, UPDATE_DTM=CURRENT_TIMESTAMP WHERE MEMBER_ID=#{1}							
+	</update>
+	
+	<select id="getmemberInfoWithUUID" parameterType="String" resultMap="memberMapper">
+	SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.TITLE as TITLE,
+		m.FIRST_NAME as FIRST_NAME,
+		m.MIDDLE_NAME as MIDDLE_NAME,
+		m.LAST_NAME as LAST_NAME ,
+		m.DISPLAY_NAME as DISPLAY_NAME,
+		m.ALIAS as ALIAS,
+		m.SUFFIX as SUFFIX,
+		m.BIRTH_DT as BIRTH_DT,
+		m.GENDER_CD as GENDER_CD,
+		m.COUNTRY_CD as COUNTRY_CD,
+		m.LANGUAGE_CD as LANGUAGE_CD,
+		m.MEMBER_STATUS_CD as MEMBER_STATUS_CD,
+		m.MEMBER_TYPE_CD as MEMBER_TYPE_CD,
+		email.MEMBER_ID as EMAIL_ID,
+		email.STATUS_CD as EMAIL_STATUS_CD,
+		email.PRIMARY_IND as EMAIL_PRIMARY_IND,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		address.MEMBER_ID  as ADDRESS_MEMBER_ID, 
+		address.STREET_ADDRESS_1 as STREET_ADDRESS_1,
+		address.STREET_ADDRESS_2 as STREET_ADDRESS_2,
+		address.POSTAL_CD as POSTAL_CD,
+		address.COUNTRY_CD as ADDRESS_COUNTRY_CD,
+		address.ADDRESS_TYPE as ADDRESS_TYPE,
+		address.CITY as CITY,
+		address.STATE_CD as STATE_CD,
+		phones.PHONE_NUMBER_ID as PHONE_ID,
+		phones.MEMBER_ID as PHONE_MEMBER_ID,
+		phones.PHONE_COUNTRY_CD as PHONE_COUNTRY_CD,
+		phones.PHONE_TYPE_CD as PHONE_TYPE_CD,
+		phones.PRIMARY_IND as PHONE_PRIMARY_IND,
+		phones.STATUS_CD as PHONE_STATUS_CD, 
+		phones.PHONE_NUMBER as PHONE_NUMBER,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.MEMBER_ID as IDENTIFIER_MEMBER_ID,
+		memberIdentifier.STATUS_CD as IDENTIFIER_STATUS_CD,
+		memberIdentifier.USER_ID as USER_ID
+		   
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID
+		left join MEMBER_IDENTIFIER as memberIdentifier
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID
+		where m.MEMBER_STATUS_CD='Active'
+		and m.UUID=#{janrainUUID}
+		
+    	
+	
+	</select>
+	
+	<update id="updateMemberAddress" parameterType="Address">
+	UPDATE MEMBER_ADDRESS
+	SET STREET_ADDRESS_1=#{streetAddress1,jdbcType=VARCHAR}, STREET_ADDRESS_2=#{streetAddress2,jdbcType=VARCHAR}, 
+	POSTAL_CD=#{postalCode,jdbcType=VARCHAR}, COUNTRY_CD=#{country,jdbcType=VARCHAR}, 
+	CITY=#{city,jdbcType=VARCHAR}, STATE_CD=#{state,jdbcType=VARCHAR}
+	WHERE ADDRESS_Type=#{addressType} and MEMBER_ID=#{memberId}
+	</update>
+	
+	<select id="getEmailAddressByMemId" parameterType="String">
+	SELECT MEMBER_ID, STATUS_CD, INSERT_DTM, UPDATE_DTM, PRIMARY_IND, EMAIL_ADDRESS
+	FROM MEMBER_EMAIL m where m.MEMBER_ID = #{memberID}
+	</select>
+	
+	<update id="updateEmailAddress" parameterType="Email">
+	UPDATE MEMBER_EMAIL
+		SET PRIMARY_IND = #{primaryIndicator,jdbcType=VARCHAR},
+		EMAIL_ADDRESS = #{email,jdbcType=VARCHAR},
+		STATUS_CD = #{statusCode,jdbcType=VARCHAR},
+		UPDATE_DTM = current_timestamp,
+		VALID_IND = #{validInd,jdbcType=VARCHAR},
+		EMAIL_VERIFIED_DTM = #{emaiVerifiedDt,jdbcType=DATE}
+	WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<update id="updateSMSNumber" parameterType="SMSNumber">
+	UPDATE MEMBER_SMS_NUMBER
+		SET STATUS_CD= #{statusCode,jdbcType=VARCHAR},
+		ALIAS= #{alias,jdbcType=VARCHAR},
+		VALIDATION_CD= #{validationCode,jdbcType=VARCHAR},
+		SMS_NUMBER = #{smsNumber},
+		UPDATE_DTM = current_timestamp
+	WHERE MEMBER_ID=#{memberId} and SMS_NUMBER_TYPE= #{smsType} 
+	</update>
+	
+	<update id="updateMemberIdentifier" parameterType="MemberIdentifier">
+	UPDATE MEMBER_IDENTIFIER
+	SET USER_ID = #{userId,jdbcType=VARCHAR},
+	STATUS_CD= #{statusCode,jdbcType=VARCHAR},
+	UPDATE_DTM = current_timestamp
+	where MEMBER_ID = #{memberId} and DOMAIN_NAME = #{domainName}
+	</update>
+	
+	<update id="updateMemberInfo" parameterType="MemberInfo">
+	UPDATE MEMBER
+	SET FIRST_NAME=#{firstName,jdbcType=VARCHAR}, LAST_NAME=#{lastName,jdbcType=VARCHAR},  BIRTH_DT=#{birthday}, COUNTRY_CD=#{country,jdbcType=VARCHAR}, LANGUAGE_CD=#{languageCode,jdbcType=VARCHAR}, MIDDLE_NAME=#{middleName,jdbcType=VARCHAR}, UUID=#{uuid}, DISPLAY_NAME=#{displayName,jdbcType=VARCHAR}, GENDER_CD=#{genderCode,jdbcType=VARCHAR} , UPDATE_DTM=#{updateDate}
+	WHERE UUID=#{uuid}
+	</update>
+	
+	
+	<select id="getMemberUUIDbyMemID" parameterType="java.math.BigInteger" resultMap="memberMapper">
+	SELECT MEMBER_ID,UUID FROM MEMBER  where MEMBER_ID=#{memberID}
+	</select>
+	
+	<!--Change for Merge Member  -->
+	
+	 <resultMap id="mergeMemberMapper" type="MergeMemberInfo">
+        <id property="memberId" column="MEMBER_ID"/>
+        <result property="uuid" column="UUID"/>
+       <association property="emailAddress" javaType="Email">
+    		<result property="memberId" column="EMAIL_ID"/>
+   		    <result property="statusCode" column="EMAIL_STATUS_CD"/>
+   			<result property="primaryIndicator" column="EMAIL_PRIMARY_IND"/>
+   			<result property="email" column="EMAIL_ADDRESS"/>
+   			<result property="validInd" column="EMAIL_VALLID_IND"/>
+   			<result property="emaiVerifiedDt" column="EMAIL_VERIFIED_DTM"/>
+       </association>
+        <collection property="comOpts" ofType="CommunicationOptIn">
+	      	 <result property="memberId" column="COM_MEMBER_ID"/>
+	      	 <result property="clientId" column="COM_CLIENT_ID"/>
+	   		 <result property="communicationTypeName" column="COM_TYPE_NAME"/>
+	    	 <result property="acceptedDate" column="COM_ACCEPTED_DTM"/>
+	    	 <result property="optedInIndicator" column="COM_OPTED_IN_IND"/>
+	    	 <result property="type" column="COM_TYPE"/>
+	    	 <result property="format" column="COM_FORMAT"/>
+	    	 <result property="schedulePreference" column="COM_SCHEDULE_PREFERENCE"/>  
+	    	  <result property="insertDate" column="COM_INSERT_DTM"/>  	
+     	</collection>        
+       <collection property="smsNumbers" ofType="SMSNumber">
+       		<result property="memberId" column="SMS_MEMBER_ID"/>
+   			<result property="smsNumber" column="SMS_NUMBER"/>
+   			<result property="smsType" column="SMS_NUMBER_TYPE"/>
+   			<result property="statusCode" column="SMS_STATUS_CD"/>
+   			<result property="alias" column="SMS_ALIAS"/>
+   			<result property="validationCode" column="SMS_VALIDATION_CD"/>
+       </collection>
+	     <collection property="memberIdentifiers" ofType="MemberIdentifier">
+	   		 <result property="domainName" column="DOMAIN_NAME"/>
+	    	 <result property="memberId" column="IDENTIFIER_MEMBER_ID"/>
+	    	 <result property="statusCode" column="IDENTIFIER_STATUS_CD"/>
+	    	 <result property="userId" column="USER_ID"/>    	
+	     </collection>  
+	     <collection property="socialDomains" ofType="MemberSocialDomain">
+	   		 <result property="domain" column="SD_DOMAIN_NAME"/>
+	    	 <result property="memberId" column="SD_MEMBER_ID"/>
+	    	 <result property="userName" column="SD_DISPLAY_NAME"/>
+	    	 <result property="profileId" column="SD_PROFILE_ID"/>
+	    	 <result property="identifier" column="SD_IDENTIFIER"/>
+	     </collection>  
+    </resultMap>
+	<select id="getmemberInfoForMerge"  resultMap="mergeMemberMapper">
+		SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.MEMBER_TYPE_CD as MEMBER_TYPE_CD,
+		email.MEMBER_ID as EMAIL_ID,
+		email.STATUS_CD as EMAIL_STATUS_CD,
+		email.PRIMARY_IND as EMAIL_PRIMARY_IND,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		email.VALID_IND as EMAIL_VALLID_IND,
+		email.EMAIL_VERIFIED_DTM as EMAIL_VERIFIED_DTM,
+		smsNumber.MEMBER_ID as SMS_MEMBER_ID,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		smsNumber.SMS_NUMBER_TYPE as SMS_NUMBER_TYPE,
+		smsNumber.ALIAS as SMS_ALIAS,
+		smsNumber.STATUS_CD as SMS_STATUS_CD,
+		smsNumber.VALIDATION_CD as SMS_VALIDATION_CD,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.MEMBER_ID as IDENTIFIER_MEMBER_ID,
+		memberIdentifier.STATUS_CD as IDENTIFIER_STATUS_CD,
+		memberIdentifier.USER_ID as USER_ID,
+		comOpts.MEMBER_ID as COM_MEMBER_ID ,
+		comOpts.OPTED_IN_IND as COM_OPTED_IN_IND,
+		comOPts.ACCEPTED_DTM as COM_ACCEPTED_DTM,
+		comOPts.COMMUNICATION_TYPE_NAME as COM_TYPE_NAME,
+		comOPts.TYPE as COM_TYPE,
+		comOPts.FORMAT as COM_FORMAT,
+		comOPts.CLIENT_ID as COM_CLIENT_ID,
+		comOpts.INSERT_DTM as COM_INSERT_DTM,
+		comOPts.SCHEDULE_PREFERENCE as COM_SCHEDULE_PREFERENCE,
+		socialDomain.MEMBER_ID as SD_MEMBER_ID,
+		socialDomain.DISPLAY_NAME as SD_DISPLAY_NAME,
+		socialDomain.DOMAIN_NAME as SD_DOMAIN_NAME,
+		socialDomain.PROFILE_ID as SD_PROFILE_ID,
+		socialDomain.IDENTIFIER as SD_IDENTIFIER
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID and email.PRIMARY_IND = 'Y' and m.MEMBER_STATUS_CD='Active'
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID and m.MEMBER_STATUS_CD='Active'
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID and m.MEMBER_STATUS_CD='Active'
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID
+		left join MEMBER_IDENTIFIER as memberIdentifier 
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID and m.MEMBER_STATUS_CD='Active' 
+		left join MEMBER_DOMAIN_PROFILE as socialDomain 
+		on m.MEMBER_ID=socialDomain.MEMBER_ID and m.MEMBER_STATUS_CD='Active' 
+		left join MEMBER_COMMUNICATION_OPT as comOpts
+		on m.MEMBER_ID=comOpts.MEMBER_ID and m.MEMBER_STATUS_CD='Active'  and UPPER(comOpts.TYPE) = 'SMS' and comOpts.INSERT_DTM in (select MAX(INSERT_DTM) from MEMBER_COMMUNICATION_OPT where MEMBER_ID = #{memberId}  and UPPER(TYPE) = 'SMS' group by TYPE)
+		where m.MEMBER_ID = #{memberId} and m.MEMBER_STATUS_CD='Active' 
+	</select>
+	<update id="updateSMSNumberForMember" parameterType="UpdateMemberRequest">
+	   
+	   MERGE INTO MEMBER_SMS_NUMBER AS SMS
+		USING (VALUES (#{memberId},#{smsObject.smsType})) AS SMS2 (MEMBER_ID,SMS_NUMBER_TYPE)
+		ON (SMS.MEMBER_ID=SMS2.MEMBER_ID and SMS.SMS_NUMBER_TYPE=SMS2.SMS_NUMBER_TYPE)
+		WHEN MATCHED THEN
+		UPDATE
+		SET
+		SMS.SMS_NUMBER=#{smsObject.smsNumber},
+		SMS.UPDATE_DTM=CURRENT_TIMESTAMP
+		WHEN NOT MATCHED THEN
+		insert (SMS_NUMBER, STATUS_CD, MEMBER_ID,INSERT_DTM, SMS_NUMBER_TYPE)
+ 		values (#{smsObject.smsNumber}, #{smsObject.statusCode,jdbcType=VARCHAR}, #{memberId},CURRENT_TIMESTAMP, #{smsObject.smsType})
+ 		
+	</update>
+	<update id="updateExternalIDForMember" parameterType="MemberIdentifier">
+	    
+	    MERGE INTO MEMBER_IDENTIFIER AS MI
+		USING (VALUES (#{memberId},#{domainName})) AS MI2 (MEMBER_ID,DOMAIN_NAME)
+		ON (MI.MEMBER_ID=MI2.MEMBER_ID and MI.DOMAIN_NAME=MI2.DOMAIN_NAME)
+		WHEN MATCHED THEN
+		UPDATE
+		SET
+		MI.USER_ID=#{userId},
+		MI.UPDATE_DTM=CURRENT_TIMESTAMP
+		WHEN NOT MATCHED THEN
+		insert (USER_ID, MEMBER_ID, DOMAIN_NAME, STATUS_CD,INSERT_DTM)
+		values (#{userId}, #{memberId}, #{domainName}, #{statusCode,jdbcType=VARCHAR}, CURRENT_TIMESTAMP)
+		 
+	</update>
+	<select id="fetchSMSNumberBySMSTypeAndMember" parameterType="SMSNumber" resultMap="smsMapper">
+		SELECT SMS_NUMBER, STATUS_CD, MEMBER_ID, SMS_NUMBER_TYPE
+		 from MEMBER_SMS_NUMBER where MEMBER_ID=#{memberId} and SMS_NUMBER_TYPE=#{smsType} 
+	</select>
+	<select id="fetchIdentifierByDomainAndMember"  parameterType="MemberIdentifier" resultMap="identifierMapper">
+		select USER_ID, MEMBER_ID, DOMAIN_NAME, STATUS_CD
+		from MEMBER_IDENTIFIER where MEMBER_ID = #{memberId} and DOMAIN_NAME= #{domainName}		
+	</select>
+	<select id="findBySMSNumber"  resultMap="smsMapper">
+		SELECT DISTINCT sms.SMS_NUMBER AS SMS_NUMBER, 
+		 sms.STATUS_CD AS STATUS_CD,
+		 sms.MEMBER_ID AS MEMBER_ID,
+		 sms.SMS_NUMBER_TYPE AS SMS_NUMBER_TYPE
+		 from  MEMBER as m left join
+		 MEMBER_SMS_NUMBER as sms
+		 ON m.MEMBER_ID=sms.MEMBER_ID
+		 where m.MEMBER_STATUS_CD='Active'
+		 and sms.SMS_NUMBER=#{smsNumber} 
+	</select>
+	<select id="findByExternalId"   resultMap="identifierMapper">
+		SELECT DISTINCT MI.USER_ID as USER_ID,
+		MI.MEMBER_ID as MEMBER_ID,
+		MI.DOMAIN_NAME as DOMAIN_NAME,
+		MI.STATUS_CD as STATUS_CD,
+		from MEMBER as m left join
+		MEMBER_IDENTIFIER as MI
+		ON m.MEMBER_ID=MI.MEMBER_ID
+		where m.MEMBER_STATUS_CD='Active'
+		and MI.USER_ID= #{externalId}		
+	</select>
+	<delete id="deleteFromSMSNumberForUpdateMember">
+		delete from MEMBER_SMS_NUMBER
+		where MEMBER_ID=#{memberId}
+		and STATUS_CD=#{statusCode}
+		and SMS_NUMBER_TYPE=#{smsType}
+	</delete>
+	<delete id="deleteFromMemberIdentifierForUpdateMember">
+		delete from MEMBER_IDENTIFIER
+		where MEMBER_ID=#{memberId}
+		and DOMAIN_NAME=#{domainName}
+	</delete>
+	
+	<resultMap id="janrainSyncMemberMapper" type="MemberInfo">
+        <id property="memberId" column="MEMBER_ID"/>
+        <result property="uuid" column="UUID"/>
+        <result property="title" column="TITLE"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="middleName" column="MIDDLE_NAME"/>
+        <result property="lastName" column="LAST_NAME"/>
+        <result property="displayName" column="DISPLAY_NAME"/>
+        <result property="alias" column="ALIAS"/>
+        <result property="suffix" column="SUFFIX"/>
+        <result property="birthday" column="BIRTH_DT"/>
+        <result property="genderCode" column="GENDER_CD"/>
+        <result property="country" column="COUNTRY_CD"/>
+        <result property="languageCode" column="LANGUAGE_CD"/>                    
+        <result property="memberStatus" column="MEMBER_STATUS_CD"/>
+        <result property="memberType" column="MEMBER_TYPE_CD"/>
+        <result property="emailAddress" column="EMAIL_ADDRESS"/>
+        <result property="created" column="CREATE_DTM"/>
+        <result property="accountStatus" column="AUTH_STATUS_CD"/>
+        <result property="aboutMe" column="ABOUT_ME"/>
+        <result property="deleteReason" column="DELETED_REASON"/>
+        <result property="authStatus" column="AUTH_STATUS_CD"/>
+        <result property="originatingClient" column="ORIGINATING_CLIENT"/>
+       
+       <collection property="smsNumbers" ofType="SMSNumber">
+   			<result property="smsNumber" column="SMS_NUMBER"/>
+   			<result property="smsType" column="SMS_NUMBER_TYPE"/>
+       </collection>
+      <collection property="addresses" ofType="Address">
+   		 <result property="memberId" column="ADDRESS_MEMBER_ID"/>
+    	 <result property="streetAddress1" column="STREET_ADDRESS_1"/>
+    	 <result property="streetAddress2" column="STREET_ADDRESS_2"/>
+    	 <result property="postalCode" column="POSTAL_CD"/>
+    	 <result property="country" column="ADDRESS_COUNTRY_CD"/>
+    	 <result property="addressType" column="ADDRESS_TYPE"/>
+    	 <result property="city" column="CITY"/>
+    	 <result property="state" column="STATE_CD"/>
+     </collection>   
+     <collection property="phoneNumbers" ofType="PhoneNumber">
+   		 <id property="phoneNumberId" column="PHONE_ID"/>
+   		 <result property="memberId" column="PHONE_MEMBER_ID"/>
+    	 <result property="countryCode" column="PHONE_COUNTRY_CD"/>
+    	 <result property="phoneType" column="PHONE_TYPE_CD"/>
+    	 <result property="primaryIndicator" column="PHONE_PRIMARY_IND"/>
+    	 <result property="statusCode" column="PHONE_STATUS_CD"/>
+    	 <result property="phoneNumber" column="PHONE_NUMBER"/>  
+    	 <result property="verified" column="PHONE_VERIFIED_DTM"/>   	
+     </collection>
+     <collection property="memberIdentifiers" ofType="MemberIdentifier">
+         <result property="name" column="DOMAIN_NAME"/>
+   		 <result property="value" column="USER_ID"/> 
+   		 <result property="domainName" column="DOMAIN_NAME"/>
+    	 <result property="memberId" column="IDENTIFIER_MEMBER_ID"/>
+    	 <result property="statusCode" column="IDENTIFIER_STATUS_CD"/>
+    	 <result property="userId" column="USER_ID"/>    	
+     </collection>           
+  		<collection property="clients" ofType="Client">
+  		 <result property="memberId" column="CLIENT_MEMBER_ID"/>
+	      	 <result property="clientId" column="CLIENT_ID"/>
+	   		 <result property="ident" column="CLIENT_IDENT"/>
+	    	 <result property="channel" column="CLIENT_CHANNEL"/>
+	    	 <result property="firstLoginDtm" column="CLIENT_FIRST_LOGIN_DTM"/>
+	    	 <result property="lastLoginDtm" column="CLIENT_LAST_LOGIN_DTM"/>
+     	</collection>
+     	<collection property="proflies" ofType="MemberDomainProfile">
+     	 <result property="memberId" column="PROFILE_MEMBER_ID"/>
+	      	 <result property="domainName" column="PROFILE_DOAMIN_NAME"/>
+	   		 <result property="profileId" column="PROFILE_ID"/>
+     	</collection>
+     	<collection property="legalAcceptances" ofType="LegalAcceptances">
+     	 <result property="memberId" column="LEGAL_ACCEPTANCE_ADDRESS_MEMBER_ID"/>
+	      	 <result property="clientId" column="LEGAL_ACCEPTANCE_CLIENT_ID"/>
+	      	  <result property="ident" column="LEGAL_ACCEPTANCE_IDENT"/>
+	    	 <result property="dateAccepted" column="LEGAL_ACCEPTANCE_ACCEPTED_DT"/>
+	    	 <result property="legalAcceptanceId" column="LEGAL_ACCEPTANCE_ID"/>
+	    	 <result property="accepted" column="ACCEPTED"/>
+     	</collection>
+     	
+     	<collection property="janrainEmailAddress" ofType="Email">
+    		<result property="memberId" column="EMAIL_ID"/>
+   		    <result property="statusCode" column="EMAIL_STATUS_CD"/>
+   			<result property="primaryIndicator" column="EMAIL_PRIMARY_IND"/>
+   			<result property="email" column="EMAIL_ADDRESS"/>
+   			<result property="validInd" column="VALID_IND"/>
+   			<result property="emaiVerifiedDt" column="EMAIL_VERIFIED_DTM"/>
+   			
+       </collection>
+    </resultMap>
+	
+	<select id="getmemberInfoWithUUIDForJanrainSync" parameterType="String" resultMap="janrainSyncMemberMapper">
+	SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.TITLE as TITLE,
+		m.FIRST_NAME as FIRST_NAME,
+		m.MIDDLE_NAME as MIDDLE_NAME,
+		m.LAST_NAME as LAST_NAME ,
+		m.DISPLAY_NAME as DISPLAY_NAME,
+		m.ALIAS as ALIAS,
+		m.SUFFIX as SUFFIX,
+		m.BIRTH_DT as BIRTH_DT,
+		m.GENDER_CD as GENDER_CD,
+		m.COUNTRY_CD as COUNTRY_CD,
+		m.LANGUAGE_CD as LANGUAGE_CD,
+		m.MEMBER_STATUS_CD as MEMBER_STATUS_CD,
+		m.MEMBER_TYPE_CD as MEMBER_TYPE_CD,
+		m.CREATE_DTM as CREATE_DTM,
+		m.ABOUT_ME as ABOUT_ME,
+		m.DELETED_REASON as DELETED_REASON,
+		m.AUTH_STATUS_CD as AUTH_STATUS_CD,
+		m.DELETED_REASON as DELETED_REASON,
+		email.MEMBER_ID as EMAIL_ID,
+		email.STATUS_CD as EMAIL_STATUS_CD,
+		email.PRIMARY_IND as EMAIL_PRIMARY_IND,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		email.VALID_IND as VALID_IND,
+		email.EMAIL_VERIFIED_DTM as EMAIL_VERIFIED_DTM,
+		address.MEMBER_ID  as ADDRESS_MEMBER_ID, 
+		address.STREET_ADDRESS_1 as STREET_ADDRESS_1,
+		address.STREET_ADDRESS_2 as STREET_ADDRESS_2,
+		address.POSTAL_CD as POSTAL_CD,
+		address.COUNTRY_CD as ADDRESS_COUNTRY_CD,
+		address.ADDRESS_TYPE as ADDRESS_TYPE,
+		address.CITY as CITY,
+		address.STATE_CD as STATE_CD,
+		phones.PHONE_NUMBER_ID as PHONE_ID,
+		phones.MEMBER_ID as PHONE_MEMBER_ID,
+		phones.PHONE_COUNTRY_CD as PHONE_COUNTRY_CD,
+		phones.PHONE_TYPE_CD as PHONE_TYPE_CD,
+		phones.PRIMARY_IND as PHONE_PRIMARY_IND,
+		phones.STATUS_CD as PHONE_STATUS_CD, 
+		phones.PHONE_NUMBER as PHONE_NUMBER,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.MEMBER_ID as IDENTIFIER_MEMBER_ID,
+		memberIdentifier.STATUS_CD as IDENTIFIER_STATUS_CD,
+		memberIdentifier.USER_ID as USER_ID,
+		client.MEMBER_ID as CLIENT_MEMBER_ID,
+		client.CLIENT_ID as CLIENT_ID,
+		client.IDENT as  CLIENT_IDENT,
+		client.CHANNEL as CLIENT_CHANNEL,
+		client.FIRST_LOGIN_DTM as CLIENT_FIRST_LOGIN_DTM,
+		client.LAST_LOGIN_DTM as CLIENT_LAST_LOGIN_DTM,	
+		legalAccp.MEMBER_ID as LEGAL_ACCEPTANCE_MEMBER_ID,
+		legalAccp.LEGAL_ACCEPTANCE_ID as LEGAL_ACCEPTANCE_ID,
+		legalAccp.IDENT as LEGAL_ACCEPTANCE_IDENT,
+		legalAccp.CLIENT_ID as LEGAL_ACCEPTANCE_CLIENT_ID,
+		legalAccp.ACCEPTED_DTM as LEGAL_ACCEPTANCE_ACCEPTED_DT,
+		legalAccp.ACCEPTED as ACCEPTED,
+		profile.MEMBER_ID as PROFILE_MEMBER_ID,
+		profile.PROFILE_ID as PROFILE_ID,
+		profile.DOMAIN_NAME as PROFILE_DOAMIN_NAME
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID
+		left join MEMBER_IDENTIFIER as memberIdentifier
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID
+		left join CLIENT as client
+		on m.MEMBER_ID=client.MEMBER_ID
+		left join LEGAL_ACCEPTANCES as legalAccp
+		on m.MEMBER_ID=legalAccp.MEMBER_ID
+		left join MEMBER_DOMAIN_PROFILE as profile
+		on m.MEMBER_ID=profile.MEMBER_ID
+		where m.MEMBER_STATUS_CD='Active'
+		and m.UUID=#{UUID,jdbcType=VARCHAR} 
+	</select>
+
+<update id="updateClient" parameterType="Client">
+	UPDATE CLIENT
+		SET 
+		IDENT = #{ident},
+		CHANNEL = #{channel,jdbcType=VARCHAR},
+		FIRST_LOGIN_DTM = #{firstLoginDtm,jdbcType=DATE},
+		LAST_LOGIN_DTM =  #{lastLoginDtm,jdbcType=DATE},
+		UPDATE_DTM = current_timestamp
+	WHERE MEMBER_ID = #{memberId} and CLIENT_ID = #{clientId}
+	</update>
+	
+	<insert id="insertClient" parameterType="Client">
+	insert into CLIENT(MEMBER_ID, CLIENT_ID, IDENT, CHANNEL, FIRST_LOGIN_DTM, LAST_LOGIN_DTM, INSERT_DTM) 
+	values 
+	(#{memberId}, #{clientId}, #{ident}, #{channel}, #{firstLoginDtm}, #{lastLoginDtm}, current_timestamp)
+	</insert>
+	
+	<update id="updateProfile" parameterType="MemberDomainProfile">
+	UPDATE MEMBER_DOMAIN_PROFILE
+		SET 
+		DOMAIN_NAME = #{domainName}, DISPLAY_NAME = #{displayName},
+		UPDATE_DTM = current_timestamp
+	WHERE MEMBER_ID = #{memberId} and PROFILE_ID = #{profileId}
+	</update>
+	
+	<insert id="insertProfile" parameterType="MemberDomainProfile">
+    	insert into MEMBER_DOMAIN_PROFILE (PROFILE_ID, DOMAIN_NAME, MEMBER_ID, INSERT_DTM,DISPLAY_NAME) 
+	    values (#{profileId}, #{domainName}, #{memberId}, current_timestamp,#{displayName})
+	</insert>
+	
+	<update id="updateLegalAcceptance" parameterType="LegalAcceptances">
+	UPDATE LEGAL_ACCEPTANCES
+		SET 
+		IDENT = #{ident},
+		CLIENT_ID = #{clientId,jdbcType=VARCHAR},
+		ACCEPTED_DTM = #{dateAccepted,jdbcType=DATE},
+		TYPE =  #{type,jdbcType=DATE},
+		UPDATED_DTM = current_timestamp,
+		ACCEPTED=#{accepted,jdbcType=VARCHAR}
+	WHERE MEMBER_ID = #{memberId} and LEGAL_ACCEPTANCE_ID = #{legalAcceptanceId}
+	</update>
+	
+	<insert id="insertLegalAcceptance" parameterType="LegalAcceptances">
+
+	insert into LEGAL_ACCEPTANCES (MEMBER_ID, LEGAL_ACCEPTANCE_ID, IDENT, CLIENT_ID, ACCEPTED_DTM, INSERTED_DTM, TYPE,ACCEPTED) 
+	values (#{memberId}, #{legalAcceptanceId}, #{ident}, #{clientId}, #{dateAccepted,jdbcType=TIMESTAMP}, current_timestamp,#{type},#{accepted})
+
+	</insert>
+	<resultMap id="csrMemberMapper" type="CSRMemberInfo">
+        <id property="memberId" column="MEMBER_ID"/>
+        <result property="janrainUUID" column="UUID"/>
+        <result property="title" column="TITLE"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="middleName" column="MIDDLE_NAME"/>
+        <result property="lastName" column="LAST_NAME"/>
+        <result property="displayName" column="DISPLAY_NAME"/>
+        <result property="alias" column="ALIAS"/>
+        <result property="suffix" column="SUFFIX"/>
+        <result property="birthDate" column="BIRTH_DT"/>                
+        <result property="janrainAccountStatus" column="AUTH_STATUS_CD"/>
+        <result property="dateCreated" column="CREATE_DTM"/>
+        <result property="houseHoldId" column="HOUSEHOLD_ID"/>
+        <result property="verifiedDate" column="EMAIL_VERIFIED_DTM"/>  
+       	<result property="primaryEmail" column="EMAIL_ADDRESS"/>
+       	<result property="deactivatedDate" column="DEACTIVATED_DATE"/>
+        <collection property="smsNumbers" ofType="SMSNumber">
+   			<result property="smsNumber" column="SMS_NUMBER"/>
+   			<result property="smsType" column="SMS_NUMBER_TYPE"/>
+       </collection>
+      <collection property="addresses" ofType="Address">
+   		 <result property="streetAddress1" column="STREET_ADDRESS_1"/>
+    	 <result property="streetAddress2" column="STREET_ADDRESS_2"/>
+    	 <result property="postalCode" column="POSTAL_CD"/>
+    	 <result property="country" column="ADDRESS_COUNTRY_CD"/>
+    	 <result property="addressType" column="ADDRESS_TYPE"/>
+    	 <result property="city" column="CITY"/>
+    	 <result property="state" column="STATE_CD"/>
+     </collection>   
+      <collection property="memberIdentifiers" ofType="TagObject">
+   		 <result property="name" column="DOMAIN_NAME"/>
+    	 <result property="value" column="USER_ID"/>    	
+     </collection> 
+     <collection property="socialProfiles" ofType="TagObject">
+   		 <result property="name" column="SOCIAL_DOMAIN_NAME"/>
+    	 <result property="value" column="SOCIAL_DISPLAY_NAME"/>    	
+     </collection> 
+      
+     <collection property="sites" ofType="Site">
+   		 <result property="siteId" column="MEMBER_SITE_ID"/>
+    	 <result property="siteName" column="SITE_NAME"/> 
+    	 <result property="lastLoginDate" column="LAST_LOGIN"/>
+    	 <result property="firstLoginDate" column="FIRST_LOGIN"/>    	
+     </collection> 
+             
+    </resultMap>
+    <select id="csrAdvanceSearch"  resultMap="csrMemberMapper" parameterType="CSRAdvanceSearchRequest">
+    	 	SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.TITLE as TITLE,
+		m.FIRST_NAME as FIRST_NAME,
+		m.MIDDLE_NAME as MIDDLE_NAME,
+		m.LAST_NAME as LAST_NAME ,
+		m.DISPLAY_NAME as DISPLAY_NAME,
+		m.ALIAS as ALIAS,
+		m.SUFFIX as SUFFIX,
+		m.BIRTH_DT as BIRTH_DT,
+		m.CREATE_DTM as CREATE_DTM,
+		m.DEACTIVATED_DATE as DEACTIVATED_DATE,
+		m.AUTH_STATUS_CD as AUTH_STATUS_CD,
+		email.EMAIL_VERIFIED_DTM as EMAIL_VERIFIED_DTM,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		address.STREET_ADDRESS_1 as STREET_ADDRESS_1,
+		address.STREET_ADDRESS_2 as STREET_ADDRESS_2,
+		address.POSTAL_CD as POSTAL_CD,
+		address.COUNTRY_CD as ADDRESS_COUNTRY_CD,
+		address.ADDRESS_TYPE as ADDRESS_TYPE,
+		address.CITY as CITY,
+		address.STATE_CD as STATE_CD,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		smsNumber.SMS_NUMBER_TYPE as SMS_NUMBER_TYPE,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.USER_ID as USER_ID,
+		mh.HOUSEHOLD_ID as  HOUSEHOLD_ID,
+  		mdp.DOMAIN_NAME as SOCIAL_DOMAIN_NAME,
+  		mdp.DISPLAY_NAME as SOCIAL_DISPLAY_NAME,
+  		ms.SITE_ID as MEMBER_SITE_ID,
+  		ms.FIRST_LOGIN as FIRST_LOGIN,
+  		ms.LAST_LOGIN as LAST_LOGIN,
+  		site.SITE_NAME as SITE_NAME
+  		 
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID and email.PRIMARY_IND = 'Y' 
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID 
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID 
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID 
+		left join MEMBER_IDENTIFIER as memberIdentifier
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID  
+		left join HOUSEHOLD as mh
+		on m.MEMBER_ID=mh.MEMBER_ID 
+		left join MEMBER_DOMAIN_PROFILE mdp
+		on m.MEMBER_ID=mdp.MEMBER_ID 
+		left join MEMBER_SITE as ms
+		on m.MEMBER_ID = ms.MEMBER_ID 
+		left join SITE as site
+		on ms.SITE_ID = site.SITE_ID
+		
+		
+		<where>
+		  m.MEMBER_STATUS_CD='Active'
+			
+			<if test="memberId != null">
+				AND m.MEMBER_ID=#{memberId}
+			</if>
+			<if test="firstName != null">
+				AND UPPER(m.FIRST_NAME) LIKE #{firstName}
+			</if>
+			<if test="lastName != null">
+				AND UPPER(m.LAST_NAME) LIKE #{lastName}
+			</if>
+			<if test="address != null">
+				AND UPPER(address.STREET_ADDRESS_1) = #{address}
+			</if>	
+			<if test="city != null">
+				AND UPPER(address.CITY) = #{city}
+			</if>
+			<if test="state != null">
+				AND UPPER(address.STATE_CD) = #{state}
+			</if>
+			<if test="zip != null">
+				AND UPPER(address.POSTAL_CD) = #{zip}
+			</if>
+			<if test="email != null">
+				
+				AND m.member_id in (select member_id from member_email where UPPER(EMAIL_ADDRESS) LIKE #{email} fetch first 300 rows only)
+			</if>
+			<if test="displayName != null">
+				AND UPPER(m.DISPLAY_NAME)=#{displayName}
+			</if>
+			<if test="mobile != null">
+			    AND m.MEMBER_ID in (select member_id from MEMBER_SMS_NUMBER where SMS_NUMBER=#{mobile})
+				
+				
+			</if>
+			<if test="memberIdentifier != null">
+			   AND m.MEMBER_ID in (select member_id from member_identifier where UPPER(DOMAIN_NAME)=#{memberIdentifier.name} and UPPER(USER_ID)=#{memberIdentifier.value} fetch first 300 rows only ) 
+				
+			</if>
+			<if test="birthDate != null">
+				AND m.BIRTH_DT=#{birthDate}
+			</if>
+			<if test="createdDate != null">
+				AND DATE(m.CREATE_DTM)=#{createdDate}
+			</if>
+		    <if test="janrainUUID != null">
+		   		AND m.UUID=#{janrainUUID}
+		    </if>
+			<if test="houseHoldId != null">
+				AND mh.HOUSEHOLD_ID=#{houseHoldId}
+			</if>
+			<if test="socialDomain != null">
+			    AND m.MEMBER_ID in (select member_id from MEMBER_DOMAIN_PROFILE where UPPER(DOMAIN_NAME)=#{socialDomain.name} and UPPER(DISPLAY_NAME)=#{socialDomain.value} )
+				
+			</if>
+			<if test="janrainAccountStatus != null">
+				AND UPPER(m.AUTH_STATUS_CD)=#{janrainAccountStatus}
+				
+			</if>
+			<if test="janrainAccountStatus != null || firstName != null || lastName != null || address != null || city != null || state != null || zip != null || birthDate != null || createdDate != null">
+			   fetch first 5400 rows only	
+			</if>
+		
+		</where>
+		
+		
+    </select>
+	
+
+	<insert id="insertMemberDeletionReason" parameterType="DeleteMemberRequest">
+		insert into MEMBER_DELETE (SESSION_ID, MEMBER_ID, DELETE_REASON, CLIENT_TRANSACTION_ID,INSERT_DTM) 
+		values
+		(#{sessionId}, #{memberId}, #{deletionReason}, #{clientTransactionId},current_timestamp)
+	</insert>
+
+   <update id="updateMemberInfoForJanrain" parameterType="MemberInfo">
+	UPDATE MEMBER
+	SET FIRST_NAME=#{firstName,jdbcType=VARCHAR}, LAST_NAME=#{lastName,jdbcType=VARCHAR},  BIRTH_DT=#{birthday}, COUNTRY_CD=#{country,jdbcType=VARCHAR}, 
+	LANGUAGE_CD=#{languageCode,jdbcType=VARCHAR}, MIDDLE_NAME=#{middleName,jdbcType=VARCHAR}, UUID=#{uuid}, DISPLAY_NAME=#{displayName,jdbcType=VARCHAR}, 
+	GENDER_CD=#{genderCode,jdbcType=VARCHAR} , UPDATE_DTM=current_timestamp ,AUTH_STATUS_CD=#{authStatus,jdbcType=VARCHAR},
+	STATUS_UPDATE_DTM=current_timestamp,DELETED_REASON=#{deleteReason,jdbcType=VARCHAR} ,DEACTIVATED_DATE=#{deactivatedDate,jdbcType=TIMESTAMP},  ORIGINATING_CLIENT=#{originatingClient,jdbcType=VARCHAR},
+	ABOUT_ME=#{aboutMe,jdbcType=VARCHAR}
+	WHERE MEMBER_ID=#{memberId}
+	</update>
+	
+	<insert id="insertEmailAddress" parameterType="Email">
+	INSERT INTO MEMBER_EMAIL (MEMBER_ID, STATUS_CD, INSERT_DTM, UPDATE_DTM, PRIMARY_IND, EMAIL_ADDRESS, VALID_IND, EMAIL_VERIFIED_DTM)
+    VALUES(#{memberId}, #{statusCode}, current_timestamp, current_timestamp, #{primaryIndicator}, #{email}, #{validInd}, #{emaiVerifiedDt})
+
+	</insert>
+	
+	
+
+	
+	<resultMap id="profileInterest" type="CdsoProfileInterest">
+		<result property="prifileInterestId" column="PROFILE_INTEREST_ID"/>
+		<result property="memberID" column="MEMBER_ID"/>
+		<result property="profileId" column="PROFILE_ID"/>
+		<result property="interestName" column="INTEREST_NAME"/>
+		<result property="insertDtm" column="INSERT_DTM"/>
+		<result property="status" column="STATUS"/>
+		<result property="updateDtm" column="UPDATE_DTM"/>
+		
+		<collection property="cdsoProfileInterestDtl" ofType="CdsoProfileInterestDtl">
+	       	<result property="profileInterestDtlId" column="PROFILE_INTEREST_DTL_ID"/>
+			<result property="profileInteretId" column="PROFILE_INTEREST_ID"/>
+			<result property="interestValue" column="INTEREST_VALUE"/>
+		 </collection>
+		
+	 
+	</resultMap>
+	
+	 <insert id="inserUpdateProfileInterest" useGeneratedKeys="true" keyProperty="cdsoProfileInterest.prifileInterestId"  keyColumn="PROFILE_INTEREST_ID"  parameterType="CdsoProfileInterest" >
+		INSERT INTO PROFILE_INTEREST ( PROFILE_ID, INTEREST_NAME, MEMBER_ID, STATUS, INSERT_DTM, UPDATE_DTM)
+		VALUES(#{profileId}, #{interestName}, #{memberId}, #{status},current_timestamp, current_timestamp)
+	</insert>
+	<select id="getProfileInterestId"  parameterType="CdsoProfileInterest"  resultType="java.math.BigInteger">
+		select PROFILE_INTEREST_ID
+		from PROFILE_INTEREST where PROFILE_ID = #{profileId} and INTEREST_NAME= #{interestName} and MEMBER_ID=#{memberId}
+	</select>
+	
+	 <insert id="insertProfileInterestDtl" useGeneratedKeys="true"   keyColumn="PROFILE_INTEREST_DTL_ID" parameterType="CdsoProfileInterest">
+		INSERT INTO PROFILE_INTEREST_DTL
+		(PROFILE_INTEREST_ID, INTEREST_VALUE)
+		VALUES
+		<foreach collection="profileInterestDtl" item="profileInterestDtl" separator=",">
+			(#{prifileInterestId},
+			#{profileInterestDtl.interestValue})			
+		</foreach>
+	</insert>
+	
+	
+	<delete id="deleteFromProfileInterestDTLForJanrain" parameterType="CdsoProfileInterest" >
+		delete from PROFILE_INTEREST_DTL where profile_interest_id in (select profile_interest_id from PROFILE_INTEREST where member_id=#{memberId} and profile_id=#{profileId})
+		                            
+		
+	</delete>
+	
+	<delete id="deleteProfileInterestForJanrain" parameterType="CdsoProfileInterest">
+		delete from PROFILE_INTEREST where MEMBER_ID=#{memberId} and PROFILE_ID =#{profileId}
+	</delete>
+	
+	
+	<delete id="phoneNumberDelete">
+		DELETE FROM  MEMBER_PHONE_NUMBERS WHERE MEMBER_ID=#{memberId}
+	</delete>
+	
+	<insert id="insertPhoneNumberForJanrain" parameterType="java.util.List">
+		insert into "MEMBER_PHONE_NUMBERS" (PHONE_TYPE_CD, PHONE_NUMBER, PRIMARY_IND, MEMBER_ID, PHONE_COUNTRY_CD, INSERT_DTM,STATUS_CD, PHONE_NUMBER_ID,PHONE_VERIFIED_DTM)
+		values
+		<foreach  collection="list" item="phoneNumber" separator=",">
+			 (#{phoneNumber.phoneType,jdbcType=VARCHAR}, #{phoneNumber.phoneNumber,jdbcType=VARCHAR}, #{phoneNumber.primaryIndicator,jdbcType=VARCHAR},#{phoneNumber.memberId} , #{phoneNumber.countryCode,jdbcType=VARCHAR}, CURRENT_TIMESTAMP,#{phoneNumber.statusCode,jdbcType=VARCHAR}, PHONE_NUMBER_ID_SEQ.nextval,#{phoneNumber.verified})
+		</foreach>
+	</insert>	
+	
+		<!-- <foreach collection="allCdsoProfileInterest" item="cdsoProfileInterest" separator=";">
+		INSERT INTO CDSOUSR.PROFILE_INTEREST
+(PROFILE_ID, INTEREST_NAME, INTEREST_VALUE, INSERT_DTM, STATUS, UPDATE_DTM, MEMBER_ID)
+  VALUES(#{cdsoProfileInterest.profileId},#{cdsoProfileInterest.interestName},#{cdsoProfileInterest.interestValue},current_timestamp,#{cdsoProfileInterest.status},current_timestamp,#{cdsoProfileInterest.memberID})
+		</foreach> -->
+	<select id="getMemberStatusFromDeleteTable" parameterType="java.math.BigInteger" resultType="int">
+		select count(*) from member_delete where member_id = #{memberId}
+	</select>
+	
+	<insert id="insertAddressJanrain" parameterType="Address">
+		insert into "MEMBER_ADDRESS" (STREET_ADDRESS_1, STREET_ADDRESS_2, POSTAL_CD, COUNTRY_CD, ADDRESS_TYPE, MEMBER_ID, INSERT_DTM, CITY, STATE_CD)
+		values 
+		<foreach collection="memberAddressListJanrain" item="address" separator=",">
+		(#{address.streetAddress1,jdbcType=VARCHAR},#{address.streetAddress2,jdbcType=VARCHAR}, #{address.postalCode,jdbcType=VARCHAR}, #{address.country,jdbcType=VARCHAR},#{address.addressType,jdbcType=VARCHAR} ,#{address.memberId}, CURRENT_TIMESTAMP,#{address.city,jdbcType=VARCHAR}, #{address.state,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+	
+	
+	<insert id="insertProfileForJanrainBatch" parameterType="MemberDomainProfile">
+    	insert into MEMBER_DOMAIN_PROFILE (PROFILE_ID, DOMAIN_NAME, MEMBER_ID, INSERT_DTM,DISPLAY_NAME,IDENTIFIER,UPDATE_DTM) 
+	    values
+	    <foreach collection="domainProfileList" item="domainProfile" separator=",">
+	     (#{domainProfile.profileId}, #{domainProfile.domainName}, #{domainProfile.memberId}, current_timestamp,#{domainProfile.displayName},#{domainProfile.identifier},current_timestamp)
+	     </foreach>
+	</insert>
+	
+	<insert id="insertMemberIdentifierJanrain" parameterType="MemberIdentifier">
+		insert into "MEMBER_IDENTIFIER" (USER_ID, MEMBER_ID, DOMAIN_NAME, STATUS_CD,INSERT_DTM)
+		values 
+		<foreach collection="memberIndList" item="memberIdentifier" separator=",">
+		(#{memberIdentifier.userId}, #{memberIdentifier.memberId}, #{memberIdentifier.domainName}, #{memberIdentifier.statusCode,jdbcType=VARCHAR}, CURRENT_TIMESTAMP)
+		</foreach>
+	</insert>
+	<select id="getMemberCount" parameterType="String" resultType="int">
+		select count(*) from  member where uuid = #{0}
+	</select>
+	
+	
+	<select id="getMemberIdbyJanrainUUID" parameterType="String" resultType="java.math.BigInteger">
+		select MEMBER_ID from MEMBER where UUID=#{0} and 
+			INSERT_DTM in(select max(INSERT_DTM) from MEMBER where UUID=#{0})
+	</select>
+	
+	<delete id="deleteMemberFromSMSNUmber">
+		delete from MEMBER_SMS_NUMBER where MEMBER_ID=#{memberId}
+	</delete>
+	<delete id="deleteMemberFromIdentifier">
+		delete from MEMBER_IDENTIFIER where MEMBER_ID=#{memberId}
+	</delete>
+	<delete id="deleteMemberFromEmail">
+		delete from MEMBER_EMAIL where MEMBER_ID=#{memberId}
+	</delete>
+	
+	<insert id="insertMemberSocialData" parameterType="MemberSocialDomain">
+		insert into "MEMBER_DOMAIN_PROFILE" (PROFILE_ID,DOMAIN_NAME,MEMBER_ID,INSERT_DTM,UPDATE_DTM,IDENTIFIER,DISPLAY_NAME) 
+		values (#{profileId},#{domain,jdbcType=VARCHAR},#{memberId},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{identifier},#{userName})
+	</insert>
+	
+	<update id="updateMemberSocialDomain" parameterType="MemberSocialDomain">
+		UPDATE "MEMBER_DOMAIN_PROFILE"
+		SET  
+		DISPLAY_NAME = #{userName}	, UPDATE_DTM = current_timestamp, IDENTIFIER = #{identifier}	
+		WHERE MEMBER_ID = #{memberId} and DOMAIN_NAME = #{domain}
+	</update>
+	
+	<delete id="deleteMemberSocialDomain">
+		delete from "MEMBER_DOMAIN_PROFILE"
+		where MEMBER_ID=#{memberId}
+		and DOMAIN_NAME = #{domain}
+	</delete>
+	
+	<update id="updateMemberSocialDomainForMember" parameterType="MemberSocialDomain">
+	   MERGE INTO MEMBER_DOMAIN_PROFILE AS MDP
+		USING (VALUES (#{memberId},#{domain})) AS MDP2 (MEMBER_ID,DOMAIN_NAME)
+		ON (MDP.MEMBER_ID=MDP2.MEMBER_ID and MDP.DOMAIN_NAME=MDP2.DOMAIN_NAME)
+		WHEN MATCHED THEN
+		UPDATE
+		SET
+		MDP.DISPLAY_NAME = #{userName}	, MDP.UPDATE_DTM = current_timestamp, MDP.IDENTIFIER = #{identifier}	
+		WHEN NOT MATCHED THEN
+		insert (PROFILE_ID,DOMAIN_NAME,MEMBER_ID,INSERT_DTM,UPDATE_DTM,IDENTIFIER,DISPLAY_NAME)
+ 		values (#{profileId},#{domain,jdbcType=VARCHAR},#{memberId},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{identifier},#{userName})
+ 		
+	</update>
+	
+	<select id="searchMemberInfoV2WithSocialSearch"  resultMap="memberMapper" flushCache="true">
+		SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.TITLE as TITLE,
+		m.FIRST_NAME as FIRST_NAME,
+		m.MIDDLE_NAME as MIDDLE_NAME,
+		m.LAST_NAME as LAST_NAME ,
+		m.DISPLAY_NAME as DISPLAY_NAME,
+		m.ALIAS as ALIAS,
+		m.SUFFIX as SUFFIX,
+		m.BIRTH_DT as BIRTH_DT,
+		m.GENDER_CD as GENDER_CD,
+		m.COUNTRY_CD as COUNTRY_CD,
+		m.LANGUAGE_CD as LANGUAGE_CD,
+		m.MEMBER_STATUS_CD as MEMBER_STATUS_CD,
+		m.MEMBER_TYPE_CD as MEMBER_TYPE_CD,
+		email.MEMBER_ID as EMAIL_ID,
+		email.STATUS_CD as EMAIL_STATUS_CD,
+		email.PRIMARY_IND as EMAIL_PRIMARY_IND,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		address.MEMBER_ID  as ADDRESS_MEMBER_ID, 
+		address.STREET_ADDRESS_1 as STREET_ADDRESS_1,
+		address.STREET_ADDRESS_2 as STREET_ADDRESS_2,
+		address.POSTAL_CD as POSTAL_CD,
+		address.COUNTRY_CD as ADDRESS_COUNTRY_CD,
+		address.ADDRESS_TYPE as ADDRESS_TYPE,
+		address.CITY as CITY,
+		address.STATE_CD as STATE_CD,
+		phones.PHONE_NUMBER_ID as PHONE_ID,
+		phones.MEMBER_ID as PHONE_MEMBER_ID,
+		phones.PHONE_COUNTRY_CD as PHONE_COUNTRY_CD,
+		phones.PHONE_TYPE_CD as PHONE_TYPE_CD,
+		phones.PRIMARY_IND as PHONE_PRIMARY_IND,
+		phones.STATUS_CD as PHONE_STATUS_CD, 
+		phones.PHONE_NUMBER as PHONE_NUMBER,
+		smsNumber.MEMBER_ID as SMS_MEMBER_ID,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		smsNumber.SMS_NUMBER_TYPE as SMS_NUMBER_TYPE,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.MEMBER_ID as IDENTIFIER_MEMBER_ID,
+		memberIdentifier.STATUS_CD as IDENTIFIER_STATUS_CD,
+		memberIdentifier.USER_ID as USER_ID,
+		socialDomain.DISPLAY_NAME as SD_DISPLAY_NAME,
+		socialDomain.DOMAIN_NAME as SD_DOMAIN_NAME,
+		socialDomain.IDENTIFIER as SD_IDENTIFIER,
+		memberdomain.DOMAIN_NAME as SOCIAL_DOMAIN_NAME,
+  		memberdomain.DISPLAY_NAME as SOCIAL_DISPLAY_NAME
+		
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID and email.PRIMARY_IND = 'Y'
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID
+		left join MEMBER_IDENTIFIER as memberIdentifier
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID
+		left join MEMBER_DOMAIN_PROFILE as socialDomain
+		on m.MEMBER_ID=socialDomain.MEMBER_ID
+		left join MEMBER_DOMAIN_PROFILE as memberdomain
+		on m.MEMBER_ID=memberdomain.MEMBER_ID
+		
+		<if test="memberStatus == null" >
+			where m.MEMBER_STATUS_CD='Active'
+		</if>
+		<if test="memberStatus != null" >
+			where m.MEMBER_STATUS_CD=#{memberStatus}
+		</if>
+		 <if test="SMSType != null" >
+			<if test="searchParameterName  != 'smsNumber'">
+				and smsNumber.SMS_NUMBER_TYPE  IN (select SMS_NUMBER_TYPE from MEMBER_SMS_NUMBER where member_id in (select member_id from MEMBER_SMS_NUMBER where UPPER(SMS_NUMBER_TYPE)=UPPER(#{SMSType}) ))
+			</if>
+		</if> 
+		<choose>
+	    	<when test="searchParameterName  == 'janrainUUID'">
+	    		and m.UUID=#{searchParameterValue}
+	    	</when>
+	    	<when test="searchParameterName  == 'smsNumber'">
+				<if test="SMSType != null">
+					and m.MEMBER_ID IN (SELECT member_id FROM cdsousr.member_sms_number WHERE sms_number=#{searchParameterValue} and UPPER(SMS_NUMBER_TYPE)=UPPER(#{SMSType}))
+				</if>
+	    		<if test="SMSType == null">
+	    			and m.MEMBER_ID IN (SELECT member_id FROM cdsousr.member_sms_number WHERE sms_number=#{searchParameterValue})
+	    		</if>
+	    	</when>
+			
+			<when test="searchParameterName  == 'memberId'">
+	    		and m.MEMBER_ID=#{searchParameterValue}
+	    	</when>
+			<when test="searchParameterName  == 'email'">
+	    		and UPPER(email.EMAIL_ADDRESS)=UPPER(#{searchParameterValue})
+	    	</when>
+	    	<when test="searchParameterName  == 'Vending-LoyaltyCard'">
+	    		and m.MEMBER_ID IN (select member_id from MEMBER_IDENTIFIER where USER_ID=#{searchParameterValue} and DOMAIN_NAME='Vending-LoyaltyCard' )
+	    	</when>
+	    	
+	    	<otherwise>
+	    		and m.MEMBER_ID IN (select member_id from MEMBER_DOMAIN_PROFILE where UPPER(DISPLAY_NAME)=UPPER(#{searchParameterValue}) and UPPER(DOMAIN_NAME)=UPPER(#{searchParameterName}))
+	    	</otherwise>
+    	</choose>
+	</select>
+	
+	<select id="searchMemberInfoV2WithOutSocialSearch"  resultMap="memberMapper" flushCache="true">
+		SELECT DISTINCT m.MEMBER_ID as MEMBER_ID ,
+		m.UUID as UUID,
+		m.TITLE as TITLE,
+		m.FIRST_NAME as FIRST_NAME,
+		m.MIDDLE_NAME as MIDDLE_NAME,
+		m.LAST_NAME as LAST_NAME ,
+		m.DISPLAY_NAME as DISPLAY_NAME,
+		m.ALIAS as ALIAS,
+		m.SUFFIX as SUFFIX,
+		m.BIRTH_DT as BIRTH_DT,
+		m.GENDER_CD as GENDER_CD,
+		m.COUNTRY_CD as COUNTRY_CD,
+		m.LANGUAGE_CD as LANGUAGE_CD,
+		m.MEMBER_STATUS_CD as MEMBER_STATUS_CD,
+		m.MEMBER_TYPE_CD as MEMBER_TYPE_CD,
+		email.MEMBER_ID as EMAIL_ID,
+		email.STATUS_CD as EMAIL_STATUS_CD,
+		email.PRIMARY_IND as EMAIL_PRIMARY_IND,
+		email.EMAIL_ADDRESS as EMAIL_ADDRESS,
+		address.MEMBER_ID  as ADDRESS_MEMBER_ID, 
+		address.STREET_ADDRESS_1 as STREET_ADDRESS_1,
+		address.STREET_ADDRESS_2 as STREET_ADDRESS_2,
+		address.POSTAL_CD as POSTAL_CD,
+		address.COUNTRY_CD as ADDRESS_COUNTRY_CD,
+		address.ADDRESS_TYPE as ADDRESS_TYPE,
+		address.CITY as CITY,
+		address.STATE_CD as STATE_CD,
+		phones.PHONE_NUMBER_ID as PHONE_ID,
+		phones.MEMBER_ID as PHONE_MEMBER_ID,
+		phones.PHONE_COUNTRY_CD as PHONE_COUNTRY_CD,
+		phones.PHONE_TYPE_CD as PHONE_TYPE_CD,
+		phones.PRIMARY_IND as PHONE_PRIMARY_IND,
+		phones.STATUS_CD as PHONE_STATUS_CD, 
+		phones.PHONE_NUMBER as PHONE_NUMBER,
+		smsNumber.MEMBER_ID as SMS_MEMBER_ID,
+		smsNumber.SMS_NUMBER as SMS_NUMBER,
+		smsNumber.SMS_NUMBER_TYPE as SMS_NUMBER_TYPE,
+		memberIdentifier.DOMAIN_NAME as DOMAIN_NAME,
+		memberIdentifier.MEMBER_ID as IDENTIFIER_MEMBER_ID,
+		memberIdentifier.STATUS_CD as IDENTIFIER_STATUS_CD,
+		memberIdentifier.USER_ID as USER_ID,
+		socialDomain.DISPLAY_NAME as SD_DISPLAY_NAME,
+		socialDomain.DOMAIN_NAME as SD_DOMAIN_NAME,
+		socialDomain.IDENTIFIER as SD_IDENTIFIER,
+		memberdomain.DOMAIN_NAME as SOCIAL_DOMAIN_NAME,
+  		memberdomain.DISPLAY_NAME as SOCIAL_DISPLAY_NAME
+		
+		from MEMBER as m left join
+		MEMBER_EMAIL as email
+		on m.MEMBER_ID=email.MEMBER_ID and email.PRIMARY_IND = 'Y'
+		left join MEMBER_ADDRESS as address
+		on m.MEMBER_ID=address.MEMBER_ID
+		left join MEMBER_PHONE_NUMBERS as phones
+		on m.MEMBER_ID=phones.MEMBER_ID
+		left join MEMBER_SMS_NUMBER as smsNumber
+		on m.MEMBER_ID=smsNumber.MEMBER_ID
+		left join MEMBER_IDENTIFIER as memberIdentifier
+		on m.MEMBER_ID=memberIdentifier.MEMBER_ID
+		left join MEMBER_DOMAIN_PROFILE as socialDomain
+		on m.MEMBER_ID=socialDomain.MEMBER_ID
+		left join MEMBER_DOMAIN_PROFILE as memberdomain
+		on m.MEMBER_ID=memberdomain.MEMBER_ID
+		
+		<if test="memberStatus == null" >
+			where m.MEMBER_STATUS_CD='Active'
+		</if>
+		<if test="memberStatus != null" >
+			where m.MEMBER_STATUS_CD=#{memberStatus}
+		</if>
+		 <if test="SMSType != null" >
+		 	<if test="searchParameterName  != 'smsNumber'">
+				and smsNumber.SMS_NUMBER_TYPE  IN (select SMS_NUMBER_TYPE from MEMBER_SMS_NUMBER where member_id in (select member_id from MEMBER_SMS_NUMBER where UPPER(SMS_NUMBER_TYPE)=UPPER(#{SMSType}) ))
+			</if>
+		</if> 
+		<choose>
+	    	<when test="searchParameterName  == 'janrainUUID'">
+	    		and m.UUID=#{searchParameterValue}
+	    	</when>
+	    	<when test="searchParameterName  == 'smsNumber'">
+	    		<if test="SMSType != null">
+	    			and m.MEMBER_ID IN (SELECT member_id FROM cdsousr.member_sms_number WHERE sms_number=#{searchParameterValue} and UPPER(SMS_NUMBER_TYPE)=UPPER(#{SMSType}))
+	    		</if>
+	    		<if test="SMSType == null">
+	    			and m.MEMBER_ID IN (SELECT member_id FROM cdsousr.member_sms_number WHERE sms_number=#{searchParameterValue})
+	    		</if>
+	    	</when>
+			<when test="searchParameterName  == 'memberId'">
+	    		and m.MEMBER_ID=#{searchParameterValue}
+	    	</when>
+			<when test="searchParameterName  == 'email'">
+	    		and UPPER(email.EMAIL_ADDRESS)=UPPER(#{searchParameterValue})
+	    	</when>
+	    	<when test="searchParameterName  == 'Vending-LoyaltyCard'">
+	    		and m.MEMBER_ID IN (select member_id from MEMBER_IDENTIFIER where USER_ID=#{searchParameterValue} and DOMAIN_NAME='Vending-LoyaltyCard' )
+	    	</when>
+	    	<otherwise>
+	    		and m.MEMBER_ID IN (select member_id from MEMBER_IDENTIFIER where UPPER(USER_ID)=UPPER(#{searchParameterValue}) and UPPER(DOMAIN_NAME)=UPPER(#{searchParameterName} ))
+	    	</otherwise>
+    	</choose>
+    	
+	</select>
+</mapper>	 

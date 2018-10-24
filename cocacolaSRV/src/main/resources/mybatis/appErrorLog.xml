@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.errorLog.ErrorLogDAO">
+
+	<resultMap type="AppErrorLog" id="appErrorLogMapper">
+ 		<id property="entryDate" column="ENTRY_DATE"/>
+ 		<id property="errorCode" column="ERROR_CODE"/>
+ 		<id property="apiName" column="API_NAME"/>	
+ 		<id property="apiArgs" column="API_ARGS"/>	
+ 		<id property="errorDesc" column="ERROR_DESC"/>	
+ 	</resultMap>
+ 	
+ 	
+ 	<insert id="insertAppErrLog"  parameterType="AppErrorLog">
+	INSERT INTO "APP_ERROR_LOG" (ERROR_CODE, API_NAME, API_ARGS, ERROR_DESC,ENTRY_DATE)
+	VALUES(#{errorCode,jdbcType=VARCHAR},#{apiName,jdbcType=VARCHAR},#{apiArgs,jdbcType=VARCHAR},#{errorDesc,jdbcType=VARCHAR},current_timestamp)
+	</insert>
+	
+	
+ 	
+ 	<insert id="insertAppErrLog1"  parameterType="AppErrorLog">
+	INSERT INTO "APP_ERROR_LOG1" (ERROR_CODE, API_NAME, API_ARGS, ERROR_DESC,ENTRY_DATE)
+	VALUES(#{errorCode,jdbcType=VARCHAR},#{apiName,jdbcType=VARCHAR},#{apiArgs,jdbcType=VARCHAR},#{errorDesc,jdbcType=VARCHAR},current_timestamp)
+	</insert>
+
+</mapper>

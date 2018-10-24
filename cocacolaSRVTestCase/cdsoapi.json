@@ -1,0 +1,1096 @@
+{
+    "name": "CDSO APIs",
+    "version": "1.0",
+    "title": "CDSO API",
+    "description": "Covers all the APIs and interfaces to the Coca-Cola Consumer Database System Member APIs,CDS Points Processing APIs,CDS Q&A APIs (Survey, Questions, and Opts),Activity/Transaction APIs, Site Configuration APIs etc",
+    "protocol": "rest",
+    "basePath": "http://localhost:8080",
+    "publicPath": "/cocacolaSRV/rest/cds/v1",
+    "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    },
+    "schemas": {
+        "MemberInfo": {
+            "id": "MemberInfo",
+            "type": "object",
+            "properties": {
+                "alias": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member alias"
+                },
+                "birthday": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member's birth date"
+                },
+                "countryCode": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Primary country for a member"
+                },
+                "displayName": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Display name for the system "
+                },
+                "emailAddress": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Primary email address for a member "
+                },
+                "firstName": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Primary email address for a member "
+                },
+                "genderCode": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Gender (M,F) "
+                },
+                "langugeCode": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Preferred languages for a member"
+                },
+                "lastName": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member Last name"
+                },
+                "memberStatus": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member's status in CDS"
+                },
+                "memberType": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member's Type like Individual"
+                },
+                "middleName": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member's middle name"
+                },
+                "sessionUUID": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Session UUID"
+                },
+                "suffix": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Member Suffix"
+                },
+                "title1": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Title of the member (Mr, MS, Mrs)"
+                },
+                "smsNumbers": {
+                    "type": "array",
+                    "id": "SmsNumbers",
+                    "required": false,
+                    "items": {
+                        "type": "object",
+                        "id": "SmsNumber",
+                        "required": false,
+                        "properties": {
+                            "smsNumber": {
+                                "type": "number",
+                                "required": false,
+                                "description": "Member SMSNumber of a SMS Type"
+                            },
+                            "smsType": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Member SMS Type"
+                            }
+                        }
+                    }
+                },
+                "addresses": {
+                    "type": "array",
+                    "id": "Addresses",
+                    "required": false,
+                    "items": {
+                        "type": "object",
+                        "id": "Addresse",
+                        "required": false,
+                        "properties": {
+                            "addressType": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Type of address ( e.g Home, Work)"
+                            },
+                            "city": {
+                                "type": "string",
+                                "required": false,
+                                "description": "City of Member"
+                            },
+                            "country": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Country of Member"
+                            },
+                            "postalCode": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Zip code of member"
+                            },
+                            "state": {
+                                "type": "string",
+                                "required": false,
+                                "description": "State of member"
+                            },
+                            "streetAddress1": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Address1 of member"
+                            },
+                            "streetAddress2": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Address2 of member"
+                            }
+                        }
+                    }
+                },
+                "memberIdentifiers": {
+                    "type": "array",
+                    "id": "MemberIdentifiers",
+                    "required": false,
+                    "items": {
+                        "type": "object",
+                        "id": "MemberIdentifier",
+                        "required": false,
+                        "properties": {
+                            "domainName": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Member External Id domain name"
+                            },
+                            "userId": {
+                                "type": "string",
+                                "required": false,
+                                "description": "Member External Id"
+                            }
+                        }
+                    }
+                },
+                "phoneNumbers": {
+                    "type": "array",
+                    "id": "PhoneNumbers",
+                    "required": false,
+                    "items": {
+                        "type": "object",
+                        "id": "PhoneNumber",
+                        "required": false,
+                        "properties": {
+                            "countryCode": {
+                                "type": "string",
+                                "required": false,
+                                "description": "The country associated with the phone number "
+                            },
+                            "phoneNumber": {
+                                "type": "string",
+                                "required": false,
+                                "description": "The specific phone number"
+                            },
+                            "phoneType": {
+                                "type": "string",
+                                "required": false,
+                                "description": "The type of phone number (Home, Cell, Work)"
+                            },
+                            "primaryIndicator": {
+                                "type": "string",
+                                "required": false,
+                                "description": " Is this the primary contact phone"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "recordSession": {
+            "properties": {
+                "memberId": {
+                    "title": "memberId",
+                    "required": true,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The CDS member identifier that will be received by Janrain."
+                },
+                "ipAddress": {
+                    "title": "ipAddress",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "The IP address of the consumer accessing the site."
+                },
+                "sessionUUID": {
+                    "title": "sessionUUID",
+                    "required": true,
+                    "default": "",
+                    "type": "string",
+                    "description": "The UUID that has been set by the calling application for matching up multiple transactions within a visit."
+                },
+                "userAgent": {
+                    "title": "userAgent",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "Record the agent that the user is doing for accessing the website."
+                },
+                "referring": {
+                    "title": "referring",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "The media that referred the consumer to the site "
+                },
+                "siteId": {
+                    "title": "siteId",
+                    "required": true,
+                    "default": "",
+                    "type": "string",
+                    "description": "Site Identifier:  This specifies the calling application ( MCR, MMS, etc.). The application will need to know their assigned site ID. "
+                },
+                "sessionDate": {
+                    "title": "sessionDate",
+                    "required": true,
+                    "default": "",
+                    "type": "string",
+                    "description": "The calling application defines the start of the session. ISO8601"
+                }
+            }
+        },
+        "redeemedCodeTransaction": {
+            "properties": {
+                "memberId": {
+                    "title": "memberId",
+                    "required": true,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The CDS member identifier"
+                },
+                "sessionUUID": {
+                    "title": "sessionUUID",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "TCCC Session ID"
+                },
+                "programId": {
+                    "title": "programId",
+                    "required": true,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The programID  returned from MixCodes"
+                },
+                "lotId": {
+                    "title": "lotId",
+                    "required": true,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The lot is part of the program and should be passed from Mix codes."
+                },
+                "productId": {
+                    "title": "productId",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "The brand of the mix code.  This could either be returned by MixCodes or derived by the calling application through a brand selector survey/question"
+                },
+                "clientTransactionId": {
+                    "title": "clientTransactionId",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "clientTransactionID only used for tracking. Not for stopping repeat transactions. "
+                },
+                "campaignId": {
+                    "title": "campaignId",
+                    "required": false,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The campaign ID is used by mixedCodes to signal a vial code. There is no need to change "
+                }
+            }
+        },
+        "postSurvey": {
+            "properties": {
+                "memberId": {
+                    "title": "memberId",
+                    "required": true,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The CDS member identifier"
+                },
+                "sessionUUID": {
+                    "title": "sessionUUID",
+                    "required": false,
+                    "default": "",
+                    "type": "string",
+                    "description": "The session UUID will connect across systems "
+                },
+                "surveyId": {
+                    "title": "surveyId",
+                    "required": true,
+                    "default": "",
+                    "type": "string",
+                    "description": "The unique survey number "
+                },
+                "questions": {
+                    "title": "questions",
+                    "required": true,
+                    "default": "",
+                    "type": "array",
+                    "description": "The question objects to be recorded ",
+                    "items": {
+                        "type": "object",
+                        "required": true,
+                        "properties": {
+                            "questionId": {
+                                "title": "questionId",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "The question number "
+                            },
+                            "questionText": {
+                                "title": "questionText",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "questionString"
+                            },
+                            "questionType": {
+                                "title": "questionType",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "questionType"
+                            },
+                            "displayOrder": {
+                                "title": "displayOrder",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "displayOrder"
+                            },
+                            "displayType": {
+                                "title": "displayType",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "displayType"
+                            },
+                            "answerOptions": {
+                                "title": "answerOptions",
+                                "required": true,
+                                "default": "",
+                                "type": "array",
+                                "description": "answerOptions",
+                                "items": {
+                                    "type": "object",
+                                    "required": true,
+                                    "properties": {
+                                        "optionId": {
+                                            "title": "optionId",
+                                            "required": true,
+                                            "default": "",
+                                            "type": "string",
+                                            "description": "optionId"
+                                        },
+                                        "optionString": {
+                                            "title": "optionString",
+                                            "required": true,
+                                            "default": "",
+                                            "type": "string",
+                                            "description": "optionString"
+                                        },
+                                        "isSelectedAnswer": {
+                                            "title": "isSelectedAnswer",
+                                            "required": true,
+                                            "default": "",
+                                            "type": "string",
+                                            "description": "isSelectedAnswer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "activity": {
+            "type": "object",
+            "id": "activity",
+            "properties": {
+                "memberId": {
+                    "title": "memberId",
+                    "required": true,
+                    "default": "",
+                    "type": "integer",
+                    "description": "The CDS member identifier"
+                },
+                "sessionUUID": {
+                    "title": "sessionUUID",
+                    "required": true,
+                    "default": "",
+                    "type": "string",
+                    "description": "TCCC Session ID"
+                },
+                "tag": {
+                    "title": "tag",
+                    "required": true,
+                    "type": "array",
+                    "description": "An array of Name value pair which can be recorded by the calling application",
+                    "items": {
+                        "type": "object",
+                        "required": true,
+                        "properties": {
+                            "name": {
+                                "title": "name",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "Tag Name ",
+                                "location": "body"
+                            },
+                            "value": {
+                                "title": "value",
+                                "required": true,
+                                "default": "",
+                                "type": "string",
+                                "description": "Tag Value"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "UpdateMemberRequest": {
+            "id": "UpdateMemberRequest",
+            "type": "object",
+            "properties": {
+                "sessionUUID": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Unique session ID created by TCCC"
+                },
+                "memberId": {
+                    "type": "string",
+                    "required": true,
+                    "description": " The Unique member ID of the account that is getting removed and all points transferred to the 'to' member account"
+                },
+                "memberIdentifier": {
+                    "type": "object",
+                    "required": false,
+                    "description": " External ID object  (should be used for vending)",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "required": false,
+                            "description": " External Id Domain Name"
+                        },
+                        "value": {
+                            "type": "string",
+                            "required": false,
+                            "description": " External Id"
+                        }
+                    }
+                },
+                "smsObject": {
+                    "type": "object",
+                    "required": false,
+                    "description": " SMS object for the SMS Type being created",
+                    "properties": {
+                        "smsNumber": {
+                            "type": "string",
+                            "required": false,
+                            "description": "SMS Number"
+                        },
+                        "smsType": {
+                            "type": "string",
+                            "required": false,
+                            "description": "SMS Type"
+                        }
+                    }
+                }
+            }
+        },
+        "MergeMemberRequest": {
+            "id": "MergeMemberRequest",
+            "type": "object",
+            "properties": {
+                "sessionUUID": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Unique session ID created by TCCC"
+                },
+                "fromMemberId": {
+                    "type": "integer",
+                    "required": true,
+                    "description": " The Unique member ID of the account that is getting removed and all points transferred to the 'to' member account "
+                },
+                "toMemberId": {
+                    "type": "integer",
+                    "required": true,
+                    "description": " The Unique member ID of the account that is going to gain the points, and member information from the 'from' member account"
+                }
+            }
+        },
+        "CreditPointRequest": {
+            "id": "CreditPointRequest",
+            "type": "object",
+            "properties": {
+                "sessionUUID": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Unique session ID created by TCCC"
+                },
+                "memberId": {
+                    "type": "integer",
+                    "required": true,
+                    "description": " Unique Id for the member generated by CDS"
+                },
+                "accountType": {
+                    "type": "string",
+                    "required": true,
+                    "description": " The Account type that is being debited and credited"
+                },
+                "pointsQuantity": {
+                    "type": "integer",
+                    "required": true,
+                    "description": " The amount of points that will be debited and credited"
+                },
+                "pointsSource": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Name of the application because of which the transaction is being called (Example: Bunchball, MixedCodes, Interact)"
+                },
+                "reasonCode": {
+                    "type": "string",
+                    "required": true,
+                    "description": " The reason code for the transaction"
+                },
+                "creditType": {
+                    "type": "string",
+                    "required": true,
+                    "description": " 'Regular', 'Admin' or 'Bonus' points will be placed here"
+                },
+                "relatedTransactionId": {
+                    "type": "integer",
+                    "required": false,
+                    "description": " The related transaction ID that will be included for tracking multiple CDS transactions"
+                },
+                "clientTransactionId": {
+                    "type": "string",
+                    "required": false,
+                    "description": "If multiple clientTransactionIDs are submitted then only the first transaction will be accepted and all other transactions matching the clientTransactionID will fail."
+                },
+                "productId": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Records the added brand detail"
+                },
+                "stakeHolder": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Records the Partner within the promotion"
+                },
+                "promotion": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Include the promotion variable for the name of the promotion"
+                }
+            }
+        },
+        "DebitPointRequest": {
+            "id": "DebitPointRequest",
+            "type": "object",
+            "properties": {
+                "sessionUUID": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Unique session ID created by TCCC"
+                },
+                "memberId": {
+                    "type": "integer",
+                    "required": true,
+                    "description": " Unique Id for the member generated by CDS"
+                },
+                "accountType": {
+                    "type": "string",
+                    "required": true,
+                    "description": " The Account type that is being debited and credited"
+                },
+                "pointsQuantity": {
+                    "type": "integer",
+                    "required": true,
+                    "description": " The amount of points that will be debited and credited"
+                },
+                "pointsSource": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Name of the application because of which the transaction is being called (Example: Bunchball, MixedCodes, Interact)"
+                },
+                "reasonCode": {
+                    "type": "string",
+                    "required": true,
+                    "description": " The reason code for the transaction"
+                },
+                "debitType": {
+                    "type": "string",
+                    "required": true,
+                    "description": "'Hold', 'Confirm' or 'Regular' debit transaction. Hold and Confirm are used when debited points are held"
+                },
+                "relatedTransactionId": {
+                    "type": "integer",
+                    "required": false,
+                    "description": " The related transaction ID that will be included for tracking multiple CDS transactions"
+                },
+                "clientTransactionId": {
+                    "type": "string",
+                    "required": false,
+                    "description": "If multiple clientTransactionIDs are submitted then only the first transaction will be accepted and all other transactions matching the clientTransactionID will fail."
+                },
+                "productId": {
+                    "type": "string",
+                    "required": false,
+                    "description": " Records the added brand detail"
+                },
+                "stakeHolder": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Records the Partner within the promotion"
+                },
+                "promotion": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Include the promotion variable for the name of the promotion"
+                },
+                "itemId": {
+                    "type": "string",
+                    "required": false,
+                    "description": "HelloWorld Item that is can be saved for a debit"
+                },
+                "holdTime": {
+                    "type": "integer",
+                    "required": false,
+                    "description": "This debit is held for X seconds and will then be rolled back unless a 'relatedTransactionId' has a confirm transaction. Maximum for this field is 240 seconds"
+                }
+            }
+        },
+        "postOpts": {
+            "id": "Opts",
+            "type": "object",
+            "properties": {
+                "memberId": {
+                    "title": "memberId",
+                    "type": "number",
+                    "required": true,
+                    "description": "CDS Member ID"
+                },
+                "sessionUUID": {
+                    "title": "sessionUUID",
+                    "type": "string",
+                    "required": false,
+                    "description": "SessionUUID that links the single session for the user"
+                },
+                "opts": {
+                    "title": "opts",
+                    "type": "array",
+                    "id": "opts",
+                    "required": true,
+                    "items": {
+                        "type": "object",
+                        "id": "item",
+                        "required": true,
+                        "properties": {
+                            "acceptedDate": {
+                                "title": "acceptedDate",
+                                "type": "string",
+                                "id": "acceptedDate",
+                                "required": false,
+                                "description": "The date when the opt was selected"
+                            },
+                            "communicationTypeName": {
+                                "title": "communicationTypeName",
+                                "type": "string",
+                                "id": "communicationTypeName",
+                                "required": true,
+                                "description": "Unique Identifier for the Opt"
+                            },
+                            "format": {
+                                "title": "format",
+                                "type": "string",
+                                "id": "format",
+                                "required": false,
+                                "description": "Format from Janrain"
+                            },
+                            "optInIndicator": {
+                                "title": "optInIndicator",
+                                "type": "string",
+                                "id": "optInIndicator",
+                                "required": false,
+                                "description": "Recording the opt in result(true or false)"
+                            },
+                            "schedule": {
+                                "title": "schedule",
+                                "type": "string",
+                                "id": "schedule",
+                                "required": false,
+                                "description": "Schedule from Janrain"
+                            },
+                            "type": {
+                                "title": "type",
+                                "type": "string",
+                                "id": "type",
+                                "required": false,
+                                "description": "Type from Janrain"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "resources": {
+        "Member Api": {
+            "methods": {
+                "searchMemberInfo": {
+                    "name": "searchMemberInfo",
+                    "description": "The method allows for searching of members within CDS",
+                    "httpMethod": "GET",
+                    "path": "/member/info",
+                    "parameters": {
+                        "sessionUUID": {
+                            "title": "sessionUUID",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "The unique session ID ",
+                            "location": "query"
+                        },
+                        "searchParameterName": {
+                            "title": "searchParameterName",
+                            "required": true,
+                            "default": "",
+                            "type": "string",
+                            "description": "The name of the field that will be searched",
+                            "location": "query"
+                        },
+                        "searchParameterValue": {
+                            "title": "searchParameterValue",
+                            "required": true,
+                            "default": "",
+                            "type": "string",
+                            "description": "The value of the field that will be searched",
+                            "location": "query"
+                        },
+                        "memberStatus": {
+                            "title": "memberStatus",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "The member status that exists example: Active, InActive",
+                            "location": "query"
+                        }
+                    }
+                },
+                "createMemberInfo": {
+                    "name": "createMemberInfo",
+                    "description": "The method allows for creation of members within CDS",
+                    "httpMethod": "POST",
+                    "path": "/member/create",
+                    "request": {
+                        "$ref": "MemberInfo"
+                    }
+                },
+                "updateMemberId": {
+                    "name": "updateMemberId",
+                    "description": "This API is designed to update vending and SMS fields for an existing CDS member. Vending and SMS are used to accrue points and can have lite accounts created for them. There is a risk that the janrain sync would not be fast enough for a SMS or vending number change at janrain to have an impact.",
+                    "httpMethod": "POST",
+                    "path": "/member/update/id",
+                    "request": {
+                        "$ref": "UpdateMemberRequest"
+                    }
+                },
+                "mergeMember": {
+                    "name": "mergeMember",
+                    "description": "Merge member is designed to combine 'Lite' accounts with full member accounts (Full member accounts have a Janrain UUID).  The merging of accounts combines member accounts together by having one account acquire the points and Unique identifiers (SMS, VendingID) from a 'from account'.  The 'from account' is then soft deleted within CDSO for historical purposes and cannot be accessed through the APIs",
+                    "httpMethod": "POST",
+                    "path": "/member/merge",
+                    "request": {
+                        "$ref": "MergeMemberRequest"
+                    }
+                }
+            }
+        },
+        "Points Api": {
+            "methods": {
+                "pointsBalance": {
+                    "name": "pointsBalance",
+                    "description": "The points balance API provides the calling application the up-to-date point’s balances for a specific account",
+                    "httpMethod": "GET",
+                    "path": "/points/balance",
+                    "parameters": {
+                        "sessionUUID": {
+                            "title": "sessionUUID",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "TCCC Session information",
+                            "location": "query"
+                        },
+                        "memberId": {
+                            "title": "memberId",
+                            "required": true,
+                            "default": "",
+                            "type": "integer",
+                            "description": "Unique Id for the member generated by CDS",
+                            "location": "query"
+                        },
+                        "accountType": {
+                            "title": "accountType",
+                            "required": true,
+                            "default": "",
+                            "type": "string",
+                            "description": "The Account Type that is returning the balance",
+                            "location": "query"
+                        }
+                    }
+                },
+                "pointsHistory": {
+                    "name": "pointsHistory",
+                    "description": "The points history CDS API provides the list of a member’s historical point’s transactions that have been applied to an account",
+                    "httpMethod": "GET",
+                    "path": "/points/history",
+                    "parameters": {
+                        "sessionUUID": {
+                            "title": "sessionUUID",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "TCCC Session information",
+                            "location": "query"
+                        },
+                        "memberId": {
+                            "title": "memberId",
+                            "required": true,
+                            "default": "",
+                            "type": "integer",
+                            "description": "Unique Id for the member generated by CDS",
+                            "location": "query"
+                        },
+                        "accountType": {
+                            "title": "accountType",
+                            "required": true,
+                            "default": "",
+                            "type": "string",
+                            "description": "The Account Type that is being debited and credited",
+                            "location": "query"
+                        },
+                        "startDateTime": {
+                            "title": "startDateTime",
+                            "required": true,
+                            "default": "",
+                            "type": "string",
+                            "description": "The Start date for the history",
+                            "location": "query"
+                        },
+                        "endDateTime": {
+                            "title": "endDateTime",
+                            "required": true,
+                            "default": "",
+                            "type": "string",
+                            "description": "The End date for the history",
+                            "location": "query"
+                        },
+                        "ascending": {
+                            "title": "ascending",
+                            "required": false,
+                            "default": "",
+                            "type": "boolean",
+                            "description": "The order",
+                            "location": "query"
+                        },
+                        "offset": {
+                            "title": "offset",
+                            "required": false,
+                            "default": 0,
+                            "type": "integer",
+                            "description": "The offset for the search",
+                            "location": "query"
+                        },
+                        "limit": {
+                            "title": "limit",
+                            "required": false,
+                            "default": 0,
+                            "type": "integer",
+                            "description": "The maximum number of responses from the search",
+                            "location": "query"
+                        },
+                        "reasonCode": {
+                            "title": "reasonCode",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "ReasonCode filter",
+                            "location": "query"
+                        }
+                    }
+                },
+                "creditPoint": {
+                    "name": "CreditPoint",
+                    "description": "This method records the credit point's transaction",
+                    "httpMethod": "POST",
+                    "path": "/points/credit",
+                    "request": {
+                        "$ref": "CreditPointRequest"
+                    }
+                },
+                "debitPoint": {
+                    "name": "debitPoint",
+                    "description": "This method records the debit point's transaction",
+                    "httpMethod": "POST",
+                    "path": "/points/debit",
+                    "request": {
+                        "$ref": "DebitPointRequest"
+                    }
+                }
+            }
+        },
+        "Record Session Information API": {
+            "methods": {
+                "recordSession": {
+                    "name": "recordSession",
+                    "description": "The Record Session API is used to track any specific sessions or visits by registered and logged on members",
+                    "httpMethod": "POST",
+                    "path": "/session/record",
+                    "request": {
+                        "$ref": "recordSession"
+                    }
+                }
+            }
+        },
+        "CDS Q&A APIs (Survey, Questions, and Opts) ": {
+            "methods": {
+                "postSurvey": {
+                    "name": "Survey",
+                    "description": "The survey API allows for calling applications to retrieve a group of questions from CDS for display",
+                    "httpMethod": "POST",
+                    "path": "/survey",
+                    "request": {
+                        "$ref": "postSurvey"
+                    }
+                },
+                "getSurvey": {
+                    "name": "getSurvey",
+                    "description": "The survey API allows for calling applications to retrieve a group of questions from CDS for display",
+                    "httpMethod": "GET",
+                    "path": "/survey",
+                    "parameters": {
+                        "sessionUUID": {
+                            "title": "sessionUUID",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "The session ID will connect across systems",
+                            "location": "query"
+                        },
+                        "memberId": {
+                            "title": "memberId",
+                            "required": false,
+                            "default": "",
+                            "type": "integer",
+                            "description": "CDS Member ID",
+                            "location": "query"
+                        },
+                        "surveyId": {
+                            "title": "surveyId",
+                            "required": true,
+                            "default": "",
+                            "type": "integer",
+                            "description": "The unique survey number",
+                            "location": "query"
+                        }
+                    }
+                },
+                "postOpts": {
+                    "name": "postOpts",
+                    "description": "The Opts API provides a single location for all communication Opts and contact preferences within CDS and CNE",
+                    "Media-Type": "application/json",
+                    "httpMethod": "POST",
+                    "path": "/opts",
+                    "request": {
+                        "$ref": "postOpts"
+                    }
+                },
+                "getOpts": {
+                    "name": "getOpts",
+                    "description": "The Opts API provides a single location for all communication Opts and contact preferences within CDS and CNE",
+                    "httpMethod": "GET",
+                    "path": "/opts",
+                    "parameters": {
+                        "sessionUUID": {
+                            "title": "sessionUUID",
+                            "required": false,
+                            "default": "",
+                            "type": "string",
+                            "description": "SessionUUID that links the single session for the user",
+                            "location": "query"
+                        },
+                        "memberId": {
+                            "title": "memberId",
+                            "required": true,
+                            "default": "",
+                            "type": "integer",
+                            "description": "CDS Member ID",
+                            "location": "query"
+                        }
+                    }
+                }
+            }
+        },
+        "Activity/Transaction APIs ": {
+            "methods": {
+                "redeemedCodeTransaction": {
+                    "name": "Redeemed Code Transaction APIs",
+                    "description": "The redeemed code transaction API records the attributes of a code that has been burned within CNE and is not being used to award points",
+                    "httpMethod": "POST",
+                    "path": "/redeemedCodeTransaction",
+                    "request": {
+                        "$ref": "redeemedCodeTransaction"
+                    }
+                },
+                "activity": {
+                    "name": "CDS Activity API",
+                    "description": "The CDS activity API allows for the calling applications to record a series of Tag objects",
+                    "httpMethod": "POST",
+                    "path": "/activity",
+                    "request": {
+                        "$ref": "activity"
+                    }
+                }
+            }
+        },
+        "Get Config ReasonCodes": {
+            "methods": {
+                "configReasonCodes": {
+                    "name": "Get Config ReasonCodes",
+                    "description": "Get Config Reason Codes",
+                    "httpMethod": "GET",
+                    "path": "/config/reason-codes"
+                }
+            }
+        }
+    }
+}

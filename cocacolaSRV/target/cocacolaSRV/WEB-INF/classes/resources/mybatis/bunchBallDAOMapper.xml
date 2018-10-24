@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.activity.ActivityDAO">
+
+	 <insert id="bunchBallInfo">
+	 INSERT INTO
+		ACTIVITY_TRANS (ACTIVITY_ID,MEMBER_ID, 
+		ACTIVITY_TAG_NAME, SESSION_ID, ACTIVITY_TAG_VALUE,
+		INSERT_DTM, ACTIVITY_DTM, TRANSACTION_ID
+		) VALUES 
+		(ACTIVITY_ID_SEQ.nextval,
+		#{memberId}, 		 
+		#{name},
+		#{sessionId}, 
+		#{value}, 
+		#{insertDtm},
+		CURRENT_TIMESTAMP,
+		#{transactionID}
+		)
+	</insert>
+
+	<resultMap id="recordRedemptionMapper" type="RedemptionTrans">
+		<id property="redemtionTransId" column="REDEMPTION_TRANS_ID"/>
+		<result property="sessionId" column="SESSION_ID"/>
+		<result property="memberId" column="MEMBER_ID"/>
+		<result property="programId" column="PROGRAM_ID"/>
+		<result property="lotId" column="LOT_ID"/>
+		<result property="productId" column="BEV_PROD_CD"/>		
+		<result property="redemptionStatusCd" column="REDEMPTION_STATUS_CD"/>
+		<result property="redemtionDt" column="REDEMPTION_DTM"/>
+		<result property="clientTransactionId" column="CLIENTTRANSACTION_ID"/>
+		<result property="campaignId" column="CAMPAIGN_ID"/>
+		<result property="insertDt" column="INSERT_DTM"/>
+		<result property="stakeholderId" column="STAKEHOLDER_ID"/>
+	</resultMap>
+	
+ 	<select id="recordRedemption" resultType="java.math.BigInteger">
+		insert into "REDEMPTION_TRANS" 
+		(MEMBER_ID, 
+		REDEMPTION_TRANS_ID, 
+		SESSION_ID,	
+		BEV_PROD_CD, 
+		LOT_ID, 
+		PROGRAM_ID,
+		CLIENTTRANSACTION_ID,
+		CAMPAIGN_ID,
+		INSERT_DTM,
+		REDEMPTION_DTM,
+		BRAND_CD) 
+		values 
+		(#{memberId}, 
+		#{transactionId},
+		#{sessionId},
+		#{productId}, 
+		#{lotId}, 
+		#{programId}, 
+		#{clientTransactionId},
+		#{campaignId},
+		CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,
+		#{brandId,jdbcType=VARCHAR}
+		)
+	</select> 
+
+	<select id="getTransId" parameterType="java.math.BigInteger" resultType="java.math.BigInteger">
+		SELECT MAX(REDEMPTION_TRANS_ID) FROM REDEMPTION_TRANS where member_id=#{memberId}
+	</select>
+
+	
+	 <resultMap id="SearchActivityObjectMapper" type="ActivitySearch">
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="siteId" column="site_id"/>
+        <result property="siteName" column="site_name"/>
+        <result property="transactionId" column="transaction_id"/>
+        <result property="date" column="INSERT_DTM"/>
+       <collection property="tags" ofType="TagObject">
+   			<result property="name" column="ACTIVITY_TAG_NAME"/>
+   			<result property="value" column="ACTIVITY_TAG_VALUE"/>
+       </collection>
+     </resultMap>
+     
+	<select id="searchActivity"  resultMap="SearchActivityObjectMapper" useCache="false" flushCache="true">
+	select distinct act.member_id,act.ACTIVITY_TAG_NAME, act.ACTIVITY_TAG_VALUE, act.INSERT_DTM,act.transaction_id,
+		st.site_name,ss.site_id
+		from activity_trans act
+		left outer join site_session ss on ss.session_id = act.session_id
+		left outer join site st on ss.site_id = st.site_id
+		<where>
+			act.member_id = #{memberId}
+			and act.transaction_id in (
+			select transaction_id from activity_trans where member_id = #{memberId}
+			<if test="tagObject != null">
+				<if test="tagObject.value != null">
+					and ACTIVITY_TAG_NAME = #{tagObject.name}
+					and ACTIVITY_TAG_VALUE = #{tagObject.value}
+				</if> 
+				<if test="tagObject.value == null">
+					and ACTIVITY_TAG_NAME = #{tagObject.name}
+				</if> 
+			</if>
+				<if test="startDate != null">
+					and ACTIVITY_DTM &gt;= #{startDate}
+				</if>
+				<if test="endDate != null">
+					and ACTIVITY_DTM &lt;= #{endDate}
+				</if>
+			)
+		</where>
+		order by act.INSERT_DTM desc
+		fetch first 300 rows only
+	</select> 
+	
+	<select id="searchActivityRev"  resultMap="SearchActivityObjectMapper" useCache="false" flushCache="true">
+	
+	select distinct act.member_id,act.ACTIVITY_TAG_NAME, act.ACTIVITY_TAG_VALUE, act.INSERT_DTM,act.transaction_id,
+		st.site_name,ss.site_id
+		from cdsousr.activity_trans act,
+        cdsousr.SITE_SESSION ss,
+        cdsousr.SITE st
+		<where>
+			act.member_id = ss.MEMBER_ID and ss.site_id=st.site_id and act.member_id=#{memberId}
+			<if test="tagObject != null">
+				<if test="tagObject.value != null">
+					and ACTIVITY_TAG_NAME = #{tagObject.name}
+					and ACTIVITY_TAG_VALUE = #{tagObject.value}
+				</if> 
+				<if test="tagObject.value == null">
+					and ACTIVITY_TAG_NAME = #{tagObject.name}
+				</if> 
+			</if>
+				<if test="startDate != null">
+					and ACTIVITY_DTM &gt;= #{startDate}
+				</if>
+				<if test="endDate != null">
+					and ACTIVITY_DTM &lt;= #{endDate}
+				</if>
+		</where>
+		order by act.INSERT_DTM desc
+		fetch first 300 rows only
+	</select> 
+
+
+	<select id="getSiteId" parameterType="java.math.BigInteger" resultType="java.math.BigInteger">
+		select site_id from site where site_id=#{siteId}
+	</select>
+	<select id="getMemberId" parameterType="java.math.BigInteger" resultType="java.math.BigInteger">
+		select member_id from member where member_id=#{memberId}
+	</select>
+</mapper>	

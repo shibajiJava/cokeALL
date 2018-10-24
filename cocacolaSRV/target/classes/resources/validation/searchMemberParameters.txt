@@ -1,0 +1,1 @@
+Vending ID,SMS Number,CDS Member ID,Email,Janrain UUID

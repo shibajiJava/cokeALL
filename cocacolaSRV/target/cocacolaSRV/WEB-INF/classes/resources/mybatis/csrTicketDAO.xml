@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.csr.CSRTicketDAO">
+	<insert id="insertCSRTicket" parameterType="CSRTicketPostRequest">
+		insert into "CSR_TICKET" (SESSION_ID, MEMBER_ID, KO_MEMBER_ID, KO_MEMBER_NAME, REASON, CSR_TICKET_DTM, CLEINT_TRANSACTION_ID, DATA_TYPE,INSERT_DTM,UPDATE_DTM)
+		values (#{sessionId}, #{memberId}, #{koMemberKoId}, #{koMemberName}, #{csrReasonCode}, #{timestamp}, #{clientTransactionId}, #{dataType},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	</insert>
+	<resultMap type="CSRTicket" id="csrTicketHistory">
+ 		<result property="memberId" column="MEMBER_ID"/>
+ 		<result property="koMemberKoId" column="KO_MEMBER_ID"/>
+ 		<result property="koMemberName" column="KO_MEMBER_NAME"/>
+ 		<result property="dataType" column="DATA_TYPE"/>
+ 		<result property="csrReasonCode" column="REASON"/>
+ 		<result property="timestamp" column="CSR_TICKET_DTM"/>
+ 	</resultMap>
+	<select id="getCSRHistory" resultMap="csrTicketHistory" parameterType="CSRTicketGetRequest">
+		SELECT SESSION_ID,
+		  ct.MEMBER_ID as MEMBER_ID  ,
+		  ct.KO_MEMBER_ID as KO_MEMBER_ID, 
+		  ct.KO_MEMBER_NAME as KO_MEMBER_NAME, 
+		  ct.REASON as REASON, 
+		  ct.CSR_TICKET_DTM as CSR_TICKET_DTM, 
+		  ct.DATA_TYPE as DATA_TYPE  
+		  FROM CSR_TICKET ct
+		  WHERE MEMBER_ID=#{memberId}
+          fetch first 300 rows only
+          
+	</select>
+</mapper>

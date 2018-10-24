@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  its a Dev Configuration file -->
+
+<configuration>  
+ <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">  
+  <!-- encoders are assigned the type  
+     ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->  
+  <encoder>  
+   <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>  
+  </encoder>  
+ </appender>  
+ 
+ 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+			
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/project/logs/rest-demo.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	
+	<appender name="FILE_daily" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/logs/koCDS.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/project/logs/koCDS_daily.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	
+	<appender name="audit_trail" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/logs/RequestResponseAudit.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/project/logs/RequestResponseAudit_daily.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	<appender name="schedular_Task" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/logs/schedularLog.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/project/logs/schedular_daily.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	<appender name="points_rollback_schedular_Task" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/logs/pointsRollbackSchedularLog.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/project/logs/pointsRollbackSchedular_daily.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	
+	<appender name="QuartzRLFA" type="ch.qos.logback.core.rolling.RollingFileAppender">
+	
+			<File>opt/project/logs/QuartzOnly.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>opt/project/logs/QuartzOnly_daily.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	<appender name="creditSACPoints_Failures" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/logs/creditSACPointsFailureLog.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>creditSACPointsFailureLog.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	<appender name="creditSACPoints_Task" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/logs/creditSACPointsLog.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>creditSACPointsLog.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	<appender name="ASYNC_audit_trail" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="audit_trail" />
+    </appender>
+    <appender name="ASYNC_schedular_Task" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="schedular_Task" />   		 
+    </appender>
+    <appender name="ASYNC_points_rollback_schedular_Task" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="points_rollback_schedular_Task" />
+   	</appender>
+   	
+   	 <appender name="ASYNC_creditSACPoints_Task" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="creditSACPoints_Task" />
+   	</appender>
+   	 <appender name="ASYNC_creditSACPoints_Failures" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="creditSACPoints_Failures" />
+   	</appender>
+   	
+    <appender name="ASYNC_QuartzRLFA" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="QuartzRLFA" />
+    </appender>
+    <appender name="ASYNC_FILE_daily" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="FILE_daily" />   		
+    </appender>
+	<logger name="com.ibm.app.services.appcontext">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.aspectServices">
+		<level value="debug" />
+	</logger>
+    <logger name="com.ibm.app.services.domain">
+        <level value="info" />
+    </logger>
+	<logger name="com.ibm.app.services.exception">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.interceptor">
+		<level value="debug" />
+	</logger>
+	
+	<logger name="com.ibm.app.services.parsistant">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.parsistantImpl">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.util">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.ws.impl">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ko.cds">
+		<level value="debug" />
+	</logger>
+	
+	<logger name="com.ko.cds.report.metrics">
+		<level value="info" />
+	</logger>
+	
+	<logger name="com.mchange.v2">
+	    <level value="info"/>
+	</logger>
+	
+	<logger name="javax.xml.bind">
+		<level value="info" />
+	</logger>
+	
+	
+	<logger name="org.springframework.jndi">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.context">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.aop">
+		<level value="info" />
+	</logger>
+
+	<logger name="com.focus.rcl.crn.CrnFacade">
+		<level value="fatal" />
+	</logger>
+	<logger name="com.focus.ftl.util.Util">
+		<level value="error" />
+	</logger>
+
+	<logger name="org.opensaml">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.apache.xml.security">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.apache">
+		<level value="info" />
+	</logger>
+
+	
+	<logger name="com.focus">
+		<level value="info" />
+	</logger>
+
+	<logger name="httpclient">
+		<level value="info" />
+	</logger> 
+	
+	<logger name="org.quartz">
+	    <level value="ALL" />
+	    <appender-ref ref="QuartzRLFA" />
+	</logger>
+	
+ 	<logger name="auditTrail" level="INFO" additivity="false">
+        <appender-ref ref="audit_trail"/>
+    </logger>
+ 
+ <logger name="schedularTask" level="INFO" additivity="false">
+        <appender-ref ref="schedular_Task"/>
+    </logger>
+  <logger name="pointsRollbackSchedularTask" level="INFO" additivity="false">
+        <appender-ref ref="points_rollback_schedular_Task"/>
+    </logger>
+ 
+    <logger name="creditSACPointsTask" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_creditSACPoints_Task"/>
+    </logger>
+    <logger name="creditSACPointsFailures" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_creditSACPoints_Failures"/>
+    </logger>
+ 
+	 <root level="debug">  
+	  <appender-ref ref="console"/>
+	  <appender-ref ref="FILE_daily"/>
+	 </root>  
+	 <root level="" ></root>
+</configuration>  

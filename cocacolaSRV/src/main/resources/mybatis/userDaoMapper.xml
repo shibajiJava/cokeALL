@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.ibm.app.services.domain">
+
+    <resultMap id="result" type="UserData">
+        <result property="empid" column="empid"/>
+        <result property="empname" column="empname"/>
+        <result property="address" column="address"/>
+       
+    </resultMap>
+
+ 
+	
+	<select id="getUserById" parameterType="int" resultMap="UserData">
+	SELECT empname, address, empid
+  			FROM test1.userdata
+        where empid = #{empId}
+	</select>
+	
+    
+</mapper>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.common.GenerateMetricsReportDAO">
+
+	<select id="getAvg" useCache="false" flushCache="true" resultType="string"  statementType="PREPARED" >
+		select avg(monitor_dtl_per) average from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test = "endTime != null">
+			and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getMin" useCache="false" flushCache="true" resultType="string">
+		select min(MONITOR_DTL_PER) from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getMax" useCache="false" flushCache="true" resultType="string">
+		select max(MONITOR_DTL_PER) from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getP95" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select>
+	 
+	
+	<select id="getP99" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		 order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getP999" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getMean_Rate" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		 order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getMean1_Rate" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getMean5_Rate" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getMean15_Rate" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getStdd_dev" useCache="false" flushCache="true" resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select> 
+	
+	<select id="getCount" useCache="false" flushCache="true" resultType="string">
+	select  sum(monitor_dtl_value) from cdsousr.monitor_tran
+	<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getRecordUnder2Sec" useCache="false" flushCache="true" resultType="string">
+		select sum(monitor_dtl_value) from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getRecordUnder4Sec" useCache="false" flushCache="true" resultType="string">
+		select sum(monitor_dtl_value) from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getRecordUnderPoint2Sec" useCache="false" flushCache="true" resultType="string">
+		select sum(monitor_dtl_value) from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select> 
+	
+	<select id="getMonitoringValue" useCache="false" flushCache="true" resultType="hashmap">
+		select monitor_dtl_id,user_def_mon_value from cdsousr.monitor_element where  active_flg = 'Y'
+	</select> 
+
+	<select id="getApi_Name" useCache="false" flushCache="true" resultType="string">
+		select distinct api_name from cdsousr.monitor_tran
+	</select>
+	
+	<select id="getP98" useCache="false" flushCache="true"   resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select>
+	<select id="getP75" useCache="false" flushCache="true"   resultType="string">
+		select MONITOR_DTL_PER from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} and api_name = #{2}
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+		order by insert_dtm desc fetch first row only
+	</select>
+	<select id="getSuccessCount" useCache="false" flushCache="true"   resultType="string">
+		select sum(monitor_dtl_value) from cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} 
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select>
+	
+	<select id="getErrorCount" useCache="false" flushCache="true"   resultType="string">
+		select sum(monitor_dtl_value) from  cdsousr.monitor_tran
+		<where> 
+		monitor_dtl_id = #{0} 
+		and insert_dtm >= #{1}
+		<if test="endTime != null">
+				and insert_dtm &lt;= #{endTime}
+		</if>
+		</where>
+	</select>
+	 
+</mapper>	

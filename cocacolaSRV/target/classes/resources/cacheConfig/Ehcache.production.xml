@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache
+    xsi:noNamespaceSchemaLocation="ehcache.xsd"
+    updateCheck="true"
+    monitoring="autodetect"
+    dynamicConfig="true"
+    maxBytesLocalHeap="50M"    
+    >
+
+
+	 <cacheManagerPeerProviderFactory
+		class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+properties="peerDiscovery=manual,rmiUrls=//10.124.117.6:40001/ClientTransactionIds|//10.124.117.6:40002/ClientTransactionIds|//10.124.117.7:40001/ClientTransactionIds"/> 
+<!--
+<cacheManagerPeerProviderFactory
+class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1,
+multicastGroupPort=4446, timeToLive=32"/>
+-->
+
+
+<cacheManagerPeerListenerFactory
+class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+properties="hostName=10.124.117.7, port=40002,
+socketTimeoutMillis=2000"/>
+
+
+    
+<!--  cache named ClientTransactionIds This cache contains a maximum in memory of 10000 elements, and will expire an element if it is idle for more than 5 minutes and lives for more than 10 minutes. If there are more than 10000 elements it will overflow to the disk cache, which in this configuration will go to wherever java.io.tmp is defined on your system. On a standard Linux system this will be /tmp" -->
+	<cache name="ClientTransactionIds"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="FIFO" 
+                   maxBytesLocalHeap="10M"
+		    >
+	     <cacheEventListenerFactory
+			class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+			properties="replicateAsynchronously=true, replicatePuts=true, replicateUpdates=true,
+			replicateUpdatesViaCopy=false, replicateRemovals=true "/>
+
+		    
+	</cache> 
+	<cache name="CDSAccountTypes"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU"
+		   diskSpoolBufferSizeMB="50"
+		   maxEntriesLocalDisk="100" 
+		    >
+		  
+            
+	</cache> 
+	<cache name="CDSSessionIds"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU"
+		   diskSpoolBufferSizeMB="50"
+		   maxEntriesLocalDisk="100" 
+		    >
+       
+	</cache>   
+	
+	<cache name="CDSMemberId"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU"
+		   diskSpoolBufferSizeMB="50"
+		   maxEntriesLocalDisk="100" 
+		    >
+       
+	</cache>   
+	
+    
+    
+ 
+</ehcache>

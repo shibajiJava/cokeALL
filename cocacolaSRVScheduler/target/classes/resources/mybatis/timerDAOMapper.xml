@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ibm.ko.cds.dao.metrics.TimerDAO">
+	
+	 <select id="getMonitoringParams" resultMap="monitorParams">
+		select USER_DEF_MON_VALUE, USER_DEF_MON_SEC_DESC, ACTIVE_FLG,MONITOR_DTL_ID 
+		from
+		CDSOUSR.MONITOR_ELEMENT
+		<!-- where ACTIVE_FLG = y -->
+	</select>
+	
+	<!-- Result map for Schedular -->
+	<resultMap id="monitorParams" type="MonitorParams">
+		<result property="paramName" column="USER_DEF_MON_VALUE" />
+		<result property="paramValue" column="USER_DEF_MON_SEC_DESC" />
+		<result property="isActive" column="ACTIVE_FLG" />
+		<result property="monitoringId" column="MONITOR_DTL_ID" />
+	</resultMap>
+	
+	<insert id="postSnaphotInfo">
+		insert into CDSOUSR.MONITOR_TRAN (API_NAME,MONITOR_DTL_ID,MONITOR_DTL_PER,
+		MONITOR_DTL_VALUE,INSERT_DTM,SAMPLE_TIME)
+		VALUES
+		(
+		#{apiName},
+		#{monitoringRefId},
+		#{monitoringName},
+		#{monitoringValue},		
+		#{insertDate},
+		#{sampleTransTime})
+	</insert>
+</mapper>	

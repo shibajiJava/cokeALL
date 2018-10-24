@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval
+  xmlns="http://oval.sf.net/oval-configuration"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://oval.sf.net/oval-configuration http://oval.sourceforge.net/oval-configuration.xsd"
+>
+  
+
+  <!-- define checks for the acme.model.User class -->
+  <!-- overwrite=false means already defined checks for this class will not be removed -->
+  
+  <class type="com.ibm.app.services.domain.UserData" overwrite="false" applyFieldConstraintsToSetters="true" >
+
+    <field name="empname" >
+      
+      
+      <length min="0" max="3">
+      <profiles ><string>defaultProfile</string> </profiles>
+      </length>
+      <length min="3" max="7">
+      <profiles ><string>insertProfile</string> </profiles>
+      </length>
+    </field>
+
+    <field name="address">
+      <length min="0" max="5" />
+      
+    </field>
+
+   
+  </class>
+  <class type="com.ko.cds.pojo.activity.TagObject" overwrite="false" applyFieldConstraintsToSetters="true" >
+    <field name="name" >
+     <length  max="256">
+      	<profiles ><string>updateMemberProfile</string> </profiles>
+      </length>      
+    </field>
+    <field name="value">
+     <length max="256">
+      	<profiles ><string>updateMemberProfile</string> </profiles>
+      </length>
+    </field>   
+  </class>
+  <class type="com.ko.cds.pojo.member.SMSNumber" overwrite="false" applyFieldConstraintsToSetters="true" >
+    <field name="smsNumber" >
+       
+      <length min="1" max="19">
+      	<profiles ><string>updateMemberProfile</string> </profiles>
+      </length>      
+    </field>
+    <field name="smsType">
+      <length  max="10">
+      	<profiles ><string>updateMemberProfile</string> </profiles>
+      </length>
+    </field>   
+  </class>
+</oval>

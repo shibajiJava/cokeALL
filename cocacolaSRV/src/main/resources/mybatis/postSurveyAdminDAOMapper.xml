@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.admin.survey.SurveyAdminDAO">
+
+
+
+	<insert id="postSurveyAdmin">
+         insert into SURVEY (SURVEY_ID, SURVEY_DESC, SURVEY_TYPE_CD, COUNTRY_CD, EXPIRATION_DT, LANGUAGE_CD, FREQUENCY_CD, INSERT_DTM, UPDATE_DTM) values
+		 (#{surveyId},#{surveyDescription},#{typeCode},#{countryCode},#{expirationDate},#{languageCode},#{frequencyCode},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	</insert>
+ 	<insert id="postSurveyNewQuestion"> 	
+		 insert into QUESTION (QUESTION_ID, QUESTION_TYPE, QUESTION_TEXT, INSERT_DTM, UPDATE_DTM, DISPLAY_TYPE, REQUIRED_IND) values 
+		 <foreach collection="list" item="serveyquestionNewAdmin" separator=",">
+         (#{serveyquestionNewAdmin.questionId},#{serveyquestionNewAdmin.questionType},#{serveyquestionNewAdmin.questionText},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{serveyquestionNewAdmin.displayType},#{serveyquestionNewAdmin.requiredInd})
+         </foreach>
+     </insert>
+	<insert id="postSurveyQuestionAdmin">
+        insert into SURVEY_QUESTIONS (SURVEY_ID, INSERT_DTM, UPDATE_DTM, QUESTION_ID) values
+        <foreach collection="list" item="serveyquestionidAdmin" separator=","> 
+           (#{serveyquestionidAdmin.surveyID},#{serveyquestionidAdmin.insertDate},CURRENT_TIMESTAMP,#{serveyquestionidAdmin.QuestionIds}) 
+	    </foreach>
+	</insert>
+	<select id="getQuestionIdIfAny" resultType="java.math.BigInteger" >
+	  select QUESTION_ID from SURVEY_QUESTIONS where QUESTION_ID=#{QuestionIds} and SURVEY_ID=#{surveyID}
+	</select>
+	<select id="getSurveyIdIfAny" resultType="java.math.BigInteger" >
+	  select SURVEY_ID from SURVEY_QUESTIONS where SURVEY_ID=#{surveyId}
+	</select>
+	<delete id="deleteQuestionIDAdmin">
+		delete from SURVEY_QUESTIONS where QUESTION_ID=#{QuestionIds} and SURVEY_ID=#{surveyId}
+	</delete> 
+    <insert id="postNewQuestion"> 	
+		 insert into QUESTION (QUESTION_ID, QUESTION_TYPE, QUESTION_TEXT, INSERT_DTM, UPDATE_DTM, DISPLAY_TYPE) values 
+		 (#{questionID},#{questionType},#{questionString},#{insertDate},CURRENT_TIMESTAMP,#{displayType})
+     </insert>
+      
+     <insert id="postQandAmapping">
+        insert into QUESTION_ANSWER_XREF (QUESTION_ID, ANSWER_ID, INSERT_DTM, UPDATE_DTM, DISPLAY_ORDER_ID) values  
+        <foreach collection="list" item="listofQuestionanswers" separator=","> 
+           (#{listofQuestionanswers.questionID},#{listofQuestionanswers.optionId},#{listofQuestionanswers.insertDate},CURRENT_TIMESTAMP,#{listofQuestionanswers.displayOrder})
+     </foreach>
+     </insert>
+    <insert id="postAnswersAdmin">
+         insert into ANSWER (ANSWER_ID, ANSWER_TEXT, INSERT_DTM, UPDATE_DTM, ANSWER_ORDER) values       
+         (#{answerID},#{optionString},#{insertDate},CURRENT_TIMESTAMP,#{answerOrder})   
+	</insert>
+	
+	<insert id="postReasonAdmin">
+         insert into REASON (REASON_CD, INSERT_DTM, UPDATE_DTM, REASON_DESC) values       
+         (#{reasonCode},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{reasonCodeDescirption})   
+	</insert> 
+	
+	<insert id="postSite">
+         insert into SITE (SITE_ID, INSERT_DTM, SITE_NAME) values     
+         (#{siteId},#{insertDate},#{siteName})   
+	</insert> 
+
+	<update id="updateSiteAdmin">
+         UPDATE "SITE" 
+         SET
+         SITE_NAME = #{siteName,jdbcType=VARCHAR},
+         UPDATE_DTM = #{updateDate} 
+         WHERE SITE_ID = #{siteId}
+	</update>        
+    <update id="updateAnswerAdmin">
+         UPDATE "ANSWER"
+         SET
+         ANSWER_TEXT = #{optionString,jdbcType=VARCHAR},
+         UPDATE_DTM = #{updateDate},
+         ANSWER_ORDER = #{answerOrder}
+         WHERE ANSWER_ID =#{answerID}
+    </update>
+    <!-- <update id="updateQuestionAnswerXref">
+       UPDATE "QUESTION_ANSWER_XREF"
+       SET
+       ANSWER_ID = #{optionId},
+       UPDATE_DTM = #{updateDate}
+       WHERE QUESTION_ID = #{questionID} and  ANSWER_ID in (SELECT ANSWER_ID from QUESTION_ANSWER_XREF WHERE ANSWER_ID=#{optionId})
+     </update> -->
+     <update id="updateQuestionAnswerXref">
+     	 MERGE INTO CDSOUSR.QUESTION_ANSWER_XREF AS t1
+   		 USING (SELECT * FROM TABLE (VALUES (#{questionID},#{optionId},#{displayOrder}))) AS t2(qid, aid,dis_ord)
+    	 ON (t1.question_id =t2.qid AND t1.answer_id = t2.aid)
+      	 WHEN MATCHED THEN
+         UPDATE SET t1.update_dtm =  CURRENT_TIMESTAMP,t1.display_order_id =t2.dis_ord 
+         WHEN NOT MATCHED THEN
+         INSERT (QUESTION_ID, ANSWER_ID, INSERT_DTM, UPDATE_DTM, DISPLAY_ORDER_ID) VALUES (t2.qid, t2.aid,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,t2.dis_ord)	
+     </update>
+     <!-- QUESTION_ID, QUESTION_TYPE, QUESTION_TEXT, INSERT_DTM, UPDATE_DTM, DISPLAY_TYPE, REQUIRED_IND) values --> 
+     <update id="updateQuestiononly">
+       UPDATE "QUESTION"
+       SET
+       QUESTION_ID =#{questionID},
+       QUESTION_TYPE = #{questionType},
+       QUESTION_TEXT = #{questionString},
+       UPDATE_DTM = #{updateDate},
+       DISPLAY_TYPE = #{displayType}
+       WHERE QUESTION_ID = #{questionID} 
+     </update>
+     
+   <resultMap id="sitesMapper" type="GetSiteAdminResponse">
+        <result property="siteId" column="SITE_ID"/>
+ 	    <result property="siteName" column="SITE_NAME"/>
+   </resultMap>
+   <select id="getSites"  resultMap="sitesMapper" parameterType="String">
+	select SITE_ID,SITE_NAME from "SITE"   
+     </select>
+     
+    <resultMap id="answersMapper" type="GetAnswerAdminResponse">
+        <result property="optionId" column="ANSWER_ID"/>
+ 	    <result property="optionString" column="ANSWER_TEXT"/>
+ 	     <result property="answerOrder" column="ANSWER_ORDER"/>
+   </resultMap>
+   <select id="getAnswers"  resultMap="answersMapper" parameterType="String">
+	select ANSWER_ID,ANSWER_TEXT,ANSWER_ORDER from "ANSWER" 
+     </select>
+     
+   <!-- <resultMap id="questionsMapper" type="GetQuestionAdminResponse">
+        <result property="questionId" column="QUESTION_ID"/>
+ 	    <result property="questionType" column="QUESTION_TYPE"/>
+ 	    <result property="questionString" column="QUESTION_TEXT"/>
+ 	    <result property="displayType" column="DISPLAY_TYPE"/>
+   </resultMap>
+   <select id="getQuestion"  resultMap="questionsMapper">
+	    select QUESTION_ID,QUESTION_TYPE,QUESTION_TEXT,DISPLAY_TYPE from "QUESTION" where QUESTION_ID=#{questionID}
+
+     </select> -->
+     
+   <resultMap id="questionsMapper" type="GetQuestionAdminResponse">
+        <result property="questionId" column="QUESTION_ID"/>
+ 	    <result property="questionType" column="QUESTION_TYPE"/>
+ 	    <result property="questionString" column="QUESTION_TEXT"/>
+ 	    <result property="displayType" column="DISPLAY_TYPE"/>
+ 	    <result property="displayOrder" column="DISPLAY_ORDER"/>
+ 	    <collection property="answerOptions" column="QUESTION_ID" ofType="GetAnswerAdminResponse">
+				<id property="optionId" column="ANSWER_ID" />
+				<result property="optionString" column="ANSWER_TEXT" />
+				<result property="answerOrder" column="ANSWER_ORDER" />	
+		</collection>
+   </resultMap>
+   <select id="getQuestion"  resultMap="questionsMapper">
+		select q.QUESTION_ID,q.QUESTION_TYPE,q.QUESTION_TEXT,q.DISPLAY_TYPE,qax.DISPLAY_ORDER_ID AS DISPLAY_ORDER,qax.ANSWER_ID,a.ANSWER_ORDER, a.ANSWER_TEXT from ( ( CDSOUSR.QUESTION q INNER JOIN CDSOUSR.QUESTION_ANSWER_XREF qax ON q.QUESTION_ID=qax.QUESTION_ID) INNER JOIN CDSOUSR.ANSWER a ON qax.ANSWER_ID=a.ANSWER_ID) where q.QUESTION_ID=#{questionID}
+   </select>
+   
+     
+     
+<!--    <select id="getQuestions"  resultMap="questionsMapper">
+	    select QUESTION_ID,QUESTION_TYPE,QUESTION_TEXT,DISPLAY_TYPE from "QUESTION"
+    </select> -->
+    <!-- New SQL added to fix self service defect DT: 21/12/2016 -->
+    <select id="getQuestions"  resultMap="questionsMapper">
+    	select q.QUESTION_ID,q.QUESTION_TYPE,q.QUESTION_TEXT,q.DISPLAY_TYPE,qax.DISPLAY_ORDER_ID AS DISPLAY_ORDER,qax.ANSWER_ID,a.ANSWER_ORDER, a.ANSWER_TEXT from ( ( CDSOUSR.QUESTION q INNER JOIN CDSOUSR.QUESTION_ANSWER_XREF qax ON q.QUESTION_ID=qax.QUESTION_ID) INNER JOIN CDSOUSR.ANSWER a ON qax.ANSWER_ID=a.ANSWER_ID)
+    </select>
+    
+    <update id="updateDisplayOrder">
+        UPDATE QUESTION_ANSWER_XREF
+		SET DISPLAY_ORDER_ID=#{displayOrder}
+		WHERE QUESTION_ID=#{questionID}
+	</update>
+    
+</mapper>	

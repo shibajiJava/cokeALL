@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.survey.SurveyDAO">
+
+
+
+
+
+	<insert id="postSurvey">
+		insert into SURVEY_TRANS (SESSION_ID, SURVEY_ID, MEMBER_ID, QUESTION_ID, ANSWER_ID, SURVEY_DTM, INSERT_DTM) 
+		values
+		 (#{sessionId},#{surveyId},#{memberId},#{questionId},#{answerId},CURRENT_TIMESTAMP,#{insertDt})
+	</insert>
+
+
+		<insert id="postSurveyList" parameterType="java.util.List">
+		insert into SURVEY_TRANS (SESSION_ID, SURVEY_ID, MEMBER_ID, QUESTION_ID, ANSWER_ID, SURVEY_DTM, INSERT_DTM,CLIENTTRANSACTIONID,ANSWER_TEXT) 
+		values
+		<foreach collection="list" item="surveyTrans" separator=",">
+		 (#{surveyTrans.sessionId},#{surveyTrans.surveyId},#{surveyTrans.memberId},#{surveyTrans.questionId},#{surveyTrans.answerId},CURRENT_TIMESTAMP,#{surveyTrans.insertDt},#{surveyTrans.clientTransactionId},#{surveyTrans.textAnswer})
+		 </foreach>
+	</insert>
+
+
+	<!-- Result map for getSurvey API -->
+	<resultMap id="surveyMapper" type="Survey">
+		<id property="surveyId" column="SURVEY_ID" />
+		<result property="surveyDescription" column="SURVEY_DESC" />
+		<result property="typeCode" column="SURVEY_TYPE_CD" />
+		<result property="countryCode" column="COUNTRY_CD" />
+		<result property="languageCode" column="LANGUAGE_CD" />
+		<result property="expirationDate" column="EXPIRATION_DT" />
+		<result property="frequencyCode" column="FREQUENCY_CD" />
+
+		<collection property="questions" column="SURVEY_ID" ofType="Question">
+			<id property="questionId" column="QUESTION_ID" />
+			<result property="questionType" column="QUESTION_TYPE" />
+			<result property="questionString" column="QUESTION_TEXT" />
+			<result property="displayType" column="DISPLAY_TYPE" />
+			<result property="displayOrder" column="Q_DISPLAY_ORDER" />
+			<collection property="answerOptions" column="QUESTION_ID"
+				ofType="Answer">
+				<id property="optionId" column="ANSWER_ID" />
+				<result property="optionString" column="ANSWER_TEXT" />
+				<result property="answerOrder" column="A_DISPLAY_ORDER" />
+				<collection property="markedAnswers" column="ANSWER_ID"				
+					ofType="SurveyTrans">
+					<id property="surveyId" column="ST_SURVEY_ID" />
+					<result property="questionId" column="ST_QUESTION_ID" />
+					<result property="answerId" column="ST_ANSWER_ID" />
+					<result property="memberId" column="ST_MEMBER_ID" />
+				</collection>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	
+	<select id="getSurveyInfo" resultMap="surveyMapper">
+		select s.SURVEY_ID, s.SURVEY_DESC, s.SURVEY_TYPE_CD, s.COUNTRY_CD,
+		s.LANGUAGE_CD, s.EXPIRATION_DT, s.FREQUENCY_CD,
+		qax.DISPLAY_ORDER_ID as Q_DISPLAY_ORDER,
+		q.QUESTION_ID, q.QUESTION_TYPE, q.QUESTION_TEXT, q.DISPLAY_TYPE,
+		sq.MIN_ANSWERS_LIMIT_QTY, sq.MAX_ANSWERS_LIMIT_QTY, q.REQUIRED_IND,
+		qax.DESIRED_ANSWER_IND, qax.DEFAULT_IND, qax.ANSWER_ID,
+		ans.ANSWER_ORDER as A_DISPLAY_ORDER, ans.ANSWER_ID,
+		ans.ANSWER_TEXT
+		from
+		((((SURVEY s inner join
+		SURVEY_QUESTIONS sq
+		on
+		s.SURVEY_ID = sq.SURVEY_ID) inner join
+		QUESTION q
+		on
+		sq.QUESTION_ID = q.QUESTION_ID) inner join
+		QUESTION_ANSWER_XREF qax
+		on q.QUESTION_ID = qax.QUESTION_ID)
+		inner join ANSWER ans
+		on qax.ANSWER_ID = ans.ANSWER_ID)
+		<where>
+			s.SURVEY_ID = #{surveyId}
+		</where>
+
+	</select>
+	
+
+	<!-- <select id="getSurveyInfo" resultMap="surveyMapper">
+		select s.SURVEY_ID, s.SURVEY_DESC, s.SURVEY_TYPE_CD, s.COUNTRY_CD,
+		s.LANGUAGE_CD, s.EXPIRATION_DT, s.FREQUENCY_CD,
+		sq.DISPLAY_ORDER_ID as Q_DISPLAY_ORDER,
+		q.QUESTION_ID, q.QUESTION_TYPE, q.QUESTION_TEXT, q.DISPLAY_TYPE,
+		sq.MIN_ANSWERS_LIMIT_QTY, sq.MAX_ANSWERS_LIMIT_QTY, q.REQUIRED_IND,
+		qax.DESIRED_ANSWER_IND, qax.DEFAULT_IND, qax.ANSWER_ID,
+		qax.DISPLAY_ORDER_ID as A_DISPLAY_ORDER, ans.ANSWER_ID,
+		ans.ANSWER_TEXT
+		from
+		((((SURVEY s inner join
+		SURVEY_QUESTIONS sq
+		on
+		s.SURVEY_ID = sq.SURVEY_ID) inner join
+		QUESTION q
+		on
+		sq.QUESTION_ID = q.QUESTION_ID) inner join
+		QUESTION_ANSWER_XREF qax
+		on q.QUESTION_ID = qax.QUESTION_ID)
+		inner join ANSWER ans
+		on qax.ANSWER_ID = ans.ANSWER_ID)
+		<where>
+			s.SURVEY_ID = #{surveyId}
+		</where>
+
+	</select> -->
+	
+	
+	<!-- <select id="getSurveyExpirationDate" resultMap="surveyMapper"> select 
+		SURVEY_ID, EXPIRATION_DT from SURVEY <where>SURVEY_ID = #{surveyID}</where> 
+		</select> -->
+
+	<select id="getSurveyInfoForMember" resultMap="surveyMapper">
+		select s.SURVEY_ID, s.SURVEY_DESC, s.SURVEY_TYPE_CD, s.COUNTRY_CD,
+		s.LANGUAGE_CD, s.EXPIRATION_DT, s.FREQUENCY_CD,
+		sq.DISPLAY_ORDER_ID as Q_DISPLAY_ORDER,
+		q.QUESTION_ID, q.QUESTION_TYPE, q.QUESTION_TEXT, q.DISPLAY_TYPE,
+		sq.MIN_ANSWERS_LIMIT_QTY, sq.MAX_ANSWERS_LIMIT_QTY, q.REQUIRED_IND,
+		qax.DESIRED_ANSWER_IND, qax.DEFAULT_IND, qax.ANSWER_ID,
+		qax.DISPLAY_ORDER_ID as A_DISPLAY_ORDER,
+		ans.ANSWER_ID,
+		ans.ANSWER_TEXT, st.SURVEY_ID as
+		ST_SURVEY_ID, st.QUESTION_ID as
+		ST_QUESTION_ID,
+		st.MEMBER_ID as ST_MEMBER_ID,
+		st.ANSWER_ID as
+		ST_ANSWER_ID
+		from
+		(((((SURVEY s
+		inner join
+		SURVEY_QUESTIONS sq
+		on s.SURVEY_ID = sq.SURVEY_ID)
+		inner join
+		QUESTION q
+		on
+		sq.QUESTION_ID = q.QUESTION_ID) inner
+		join
+		QUESTION_ANSWER_XREF qax
+		on q.QUESTION_ID =
+		qax.QUESTION_ID)
+		inner join ANSWER ans
+		on qax.ANSWER_ID =
+		ans.ANSWER_ID) full
+		JOIN SURVEY_TRANS st
+		on ans.ANSWER_ID =
+		st.ANSWER_ID and
+		st.member_id=#{memberId} and
+		st.SURVEY_DTM in (select
+		MAX(INSERT_DTM) from
+		SURVEY_TRANS where SURVEY_ID =
+		#{surveyId} and MEMBER_ID =
+		#{memberId} group by survey_id,question_id,answer_id))
+		<where>
+			s.SURVEY_ID = #{surveyId}
+		</where>
+	</select>
+
+	<!-- <if test="sessionUUID != null"> and st.SESSION_ID = (select SESSION_ID 
+		from SITE_SESSION where SESSION_UUID = #{sessionUUID}) </if> -->
+	<!-- Query to fetch answers only from SURVEY_TRANS <select id="getSurveyInfoForMember" 
+		resultMap="surveyMapper"> select s.SURVEY_ID, s.SURVEY_DESC, s.SURVEY_TYPE_CD, 
+		s.COUNTRY_CD, s.LANGUAGE_CD, s.EXPIRATION_DT, s.FREQUENCY_CD, s.DISPLAY_LATEST_ANSWERS_IND, 
+		q.QUESTION_ID, q.QUESTION_TYPE, q.QUESTION_TEXT, q.DISPLAY_TYPE, q.MIN_ANSWERS_LIMIT_QTY, 
+		q.MAX_ANSWERS_LIMIT_QTY, ans.ANSWER_ID, ans.ANSWER_TEXT from ((((SURVEY 
+		s inner join SURVEY_QUESTIONS sq on s.SURVEY_ID = sq.SURVEY_ID) inner 
+		join QUESTION q on sq.QUESTION_ID = q.QUESTION_ID) inner join SURVEY_TRANS 
+		st on q.QUESTION_ID = st.QUESTION_ID) inner join ANSWER ans on st.ANSWER_ID 
+		= ans.ANSWER_ID) <where> st.SURVEY_ID = #{surveyID} and st.MEMBER_ID = #{memberID} 
+		</where> </select> -->
+
+	<insert id="postOpts" parameterType="OptsRequest">
+		INSERT INTO
+		MEMBER_COMMUNICATION_OPT (MEMBER_ID,
+		COMMUNICATION_TYPE_NAME, ACCEPTED_DTM, TYPE,
+		FORMAT,
+		SCHEDULE_PREFERENCE,
+		OPTED_IN_IND, INSERT_DTM, SESSION_ID)
+		VALUES
+		<foreach collection="opts" item="opts" separator=",">
+			(#{memberId},
+			#{opts.communicationTypeName},
+			#{opts.acceptedDate},
+			#{opts.type},
+			#{opts.format},
+			#{opts.schedule},
+			#{opts.optInIndicator},
+			CURRENT_TIMESTAMP,
+			(select SESSION_ID from SITE_SESSION
+			where
+			SESSION_UUID = #{sessionUUID}))
+		</foreach>
+	</insert>
+
+	<resultMap id="optsMapper" type="GetOptsResponse">
+		<collection property="opts" column="" ofType="OptPreference">
+			<result property="communicationTypeName" column="COMMUNICATION_TYPE_NAME" />
+			<result property="acceptedDate" column="ACCEPTED_DTM" />
+			<result property="type" column="TYPE" />
+			<result property="schedule" column="SCHEDULE_PREFERENCE" />
+			<result property="format" column="FORMAT" />
+			<result property="optInIndicator" column="OPTED_IN_IND" />
+		</collection>
+	</resultMap>
+
+	<resultMap type="CommunicationOptIn" id="optsMapperFile">
+		<id property="memberId" column="MEMBER_ID"/>
+		<result property="communicationTypeName" column="COMMUNICATION_TYPE_NAME"/>
+		<result property="acceptedDate" column="ACCEPTED_DTM"/>
+		<result property="clientId" column="CLIENT_ID"/>
+		<result property="optedInIndicator" column="OPTED_IN_IND"/>
+		<result property="type" column="TYPE"/>
+		<result property="format" column="FORMAT"/>
+		<result property="schedulePreference" column="SCHEDULE_PREFERENCE"/>	
+		<result property="insertDate" column="INSERT_DTM"/>		
+	</resultMap>
+	<select id="getOpts" resultMap="optsMapper">
+		select opt1.MEMBER_ID, opt1.COMMUNICATION_TYPE_NAME, opt1.ACCEPTED_DTM, opt1.TYPE, opt1.FORMAT,opt1.SCHEDULE_PREFERENCE, opt1.OPTED_IN_IND
+		from MEMBER_COMMUNICATION_OPT opt1
+		inner join 
+		(
+		  SELECT COMMUNICATION_TYPE_NAME, max(insert_dtm) as mts
+		  FROM MEMBER_COMMUNICATION_OPT  where MEMBER_ID = #{memberId}	
+		  GROUP BY communication_type_name 
+		) opt2 on opt2.communication_type_name = opt1.communication_type_name and opt1.insert_dtm = opt2.mts and  opt1.MEMBER_ID = #{memberId}	
+	</select>
+	<select id="getOptsAfterMerge"  parameterType="java.math.BigInteger" resultMap="optsMapperFile">
+		select opt1.MEMBER_ID, opt1.COMMUNICATION_TYPE_NAME, opt1.ACCEPTED_DTM, opt1.TYPE, opt1.FORMAT,opt1.SCHEDULE_PREFERENCE, opt1.OPTED_IN_IND,opt1.insert_dtm
+		from MEMBER_COMMUNICATION_OPT opt1
+		inner join 
+		(
+		  SELECT COMMUNICATION_TYPE_NAME, max(insert_dtm) as mts
+		  FROM MEMBER_COMMUNICATION_OPT  where MEMBER_ID = #{memberId} and COMMUNICATION_TYPE_NAME = 'SMS'
+		  GROUP BY communication_type_name 
+		) opt2 on opt2.communication_type_name = opt1.communication_type_name and opt1.insert_dtm = opt2.mts and  opt1.MEMBER_ID = #{memberId}	
+	</select>
+	<insert id="insertOpts">
+		INSERT INTO MEMBER_COMMUNICATION_OPT (MEMBER_ID, OPTED_IN_IND, ACCEPTED_DTM, INSERT_DTM,
+		COMMUNICATION_TYPE_NAME, TYPE, FORMAT, SCHEDULE_PREFERENCE, CLIENT_ID) 
+		VALUES 
+		(#{memberId}, #{optedInIndicator},#{acceptedDate}, #{insertDate}, #{communicationTypeName},#{type},#{format},#{schedulePreference},#{clientId})
+	</insert>
+	
+	<update id="updateOpts" parameterType="CommunicationOptIn">
+		UPDATE MEMBER_COMMUNICATION_OPT
+		SET 
+		OPTED_IN_IND = #{optedInIndicator,jdbcType=VARCHAR},
+		TYPE = #{type,jdbcType=VARCHAR} , 
+		FORMAT = #{format,jdbcType=VARCHAR}, 
+		SCHEDULE_PREFERENCE = #{schedulePreference,jdbcType=VARCHAR}, 
+		CLIENT_ID = #{clientId,jdbcType=VARCHAR}
+		WHERE COMMUNICATION_TYPE_NAME = #{communicationTypeName} and MEMBER_ID = #{memberId} and ACCEPTED_DTM = #{acceptedDate}
+	</update>
+	
+	<resultMap id="surveyTransMap" type="SurveyTrans" >
+		<id property="memberId" column="MEMBER_ID"/>
+		<result property="sessionId" column="SESSION_ID"/>
+		<result property="surveyId" column="SURVEY_ID"/>
+		<result property="questionId" column="QUESTION_ID"/>
+		<result property="answerId" column="ANSWER_ID"/>
+		<result property="surveyDt" column="SURVEY_DTM"/>
+		<result property="insertDt" column="INSERT_DTM"/>
+		<result property="textAnswer" column="ANSWER_TEXT"/>
+		
+		
+	</resultMap>
+	
+	<select id="getAnsweredSurvey" resultMap="surveyTransMap" parameterType="java.math.BigInteger">
+		 select st.survey_id,st.question_id,st.answer_id,st.member_id,st.ANSWER_TEXT from CDSOUSR.SURVEY_TRANS st INNER JOIN ( select question_id,MAX(INSERT_DTM) as MaxDate 
+		 FROM CDSOUSR.SURVEY_TRANS where member_id=#{memberId} and SURVEY_ID =#{surveyId} GROUP BY question_id) mst ON st.question_id = mst.question_id AND st.INSERT_DTM = mst.MaxDate 
+		 group by st.survey_id,st.question_id,st.answer_id,st.member_id,st.ANSWER_TEXT order by st.question_id,st.answer_id desc
+	</select>
+	
+	
+	<!-- <select id="getAnsweredSurvey" resultMap="surveyTransMap" parameterType="java.math.BigInteger">
+		 select st.survey_id,st.question_id,st.answer_id,st.member_id,st.ANSWER_TEXT from CDSOUSR.SURVEY_TRANS st INNER JOIN ( select question_id,MAX(INSERT_DTM) as MaxDate
+		 FROM CDSOUSR.SURVEY_TRANS GROUP BY question_id) mst ON st.question_id = mst.question_id AND st.INSERT_DTM = mst.MaxDate  
+		 where st.member_id=#{memberId} and st.SURVEY_ID =#{surveyId} group by st.survey_id,st.question_id,st.answer_id,st.member_id,st.ANSWER_TEXT order by st.question_id,st.answer_id desc
+	</select>  -->
+	
+	<!-- <select id="getAnsweredSurvey" resultMap="surveyTransMap" parameterType="java.math.BigInteger">
+		
+		 select survey_id,question_id,answer_id,member_id,ANSWER_TEXT from SURVEY_TRANS where 
+			member_id=#{memberId} and SURVEY_ID =#{surveyId} and INSERT_DTM in(select MAX(INSERT_DTM) from CDSOUSR.SURVEY_TRANS where  
+			member_id=#{memberId} and SURVEY_ID =#{surveyId} GROUP BY question_id)  
+			group by survey_id,question_id,answer_id,member_id,ANSWER_TEXT order by question_id,answer_id desc
+	</select> -->
+	
+	<select id="getAnsweredSurveyWithQuestionId" resultMap="surveyTransMap" parameterType="java.math.BigInteger">
+		
+		 select survey_id,question_id,answer_id,member_id,ANSWER_TEXT from SURVEY_TRANS where 
+			member_id=#{memberId} and SURVEY_ID =#{surveyId} and question_id=#{questionId} and INSERT_DTM in(select MAX(INSERT_DTM) from CDSOUSR.SURVEY_TRANS where  
+			member_id=#{memberId} and SURVEY_ID =#{surveyId} GROUP BY question_id)  
+			group by survey_id,question_id,answer_id,member_id,ANSWER_TEXT order by question_id,answer_id desc
+	</select>
+	
+	<insert id="insertCommunicationOptsJanrain">
+		INSERT INTO MEMBER_COMMUNICATION_OPT (MEMBER_ID, OPTED_IN_IND, ACCEPTED_DTM, INSERT_DTM,
+		COMMUNICATION_TYPE_NAME, TYPE, FORMAT, SCHEDULE_PREFERENCE, CLIENT_ID) 
+		VALUES 
+		<foreach collection="janrainCommOptList" item="communicationOptIn" separator=",">
+			(#{communicationOptIn.memberId}, #{communicationOptIn.optedInIndicator},#{communicationOptIn.acceptedDate}, CURRENT_TIMESTAMP, #{communicationOptIn.communicationTypeName},#{communicationOptIn.type},#{communicationOptIn.format},#{communicationOptIn.schedulePreference},#{communicationOptIn.clientId})
+		</foreach>
+	</insert>
+	
+	<insert id="updateCommunicationOptsJanrain" >
+		UPDATE MEMBER_COMMUNICATION_OPT SET OPTED_IN_IND=#{optedInIndicator,jdbcType=VARCHAR}, ACCEPTED_DTM=#{acceptedDate}, "TYPE"=#{type}, FORMAT=#{format}, SCHEDULE_PREFERENCE=#{schedulePreference}, CLIENT_ID=#{clientId}
+            WHERE MEMBER_ID=#{memberId} AND COMMUNICATION_TYPE_NAME=#{communicationTypeName}
+	</insert>
+	
+</mapper>	

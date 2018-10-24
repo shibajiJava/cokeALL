@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Dev file -->
+<configuration>
+ <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <!-- encoders are assigned the type
+     ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+  <encoder>
+   <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+  </encoder>
+ </appender>
+
+        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+
+                        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <!-- daily rollover -->
+                        <FileNamePattern>/rest-demo.%d{yyyy-MM-dd}.log</FileNamePattern>
+
+                        <!-- keep 30 days' worth of history -->
+                        <maxHistory>30</maxHistory>
+                        </rollingPolicy>
+
+                        <encoder>
+                        <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+                        </encoder>
+        </appender>
+
+
+        <appender name="FILE_daily" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                        <File>/opt/project/cds/logs/koCDSSchedular.log</File>
+                        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <!-- daily rollover -->
+                        <FileNamePattern>/opt/project/cds/logs/koCDSSchedular_old.%d{yyyy-MM-dd}.log</FileNamePattern>
+
+                        <!-- keep 30 days' worth of history -->
+                        <maxHistory>30</maxHistory>
+                        </rollingPolicy>
+
+                        <encoder>
+                        <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+                        </encoder>
+        </appender>
+
+	<appender name="janrainforETL_schedular_Task" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/opt/project/cds/janrainForETL/logs/janrainforETLschedularLog.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/project/cds/janrainForETL/logs/janrainforETLschedularLog.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+    
+        <logger name="com.ibm.app.services.appcontext">
+                <level value="debug" />
+        </logger>
+        <logger name="com.ibm.app.services.aspectServices">
+                <level value="debug" />
+        </logger>
+    <logger name="com.ibm.app.services.domain">
+        <level value="info" />
+    </logger>
+        <logger name="com.ibm.app.services.exception">
+                <level value="debug" />
+        </logger>
+        <logger name="com.ibm.app.services.interceptor">
+                <level value="debug" />
+        </logger>
+
+        <logger name="com.ibm.app.services.parsistant">
+                <level value="debug" />
+        </logger>
+        <logger name="com.ibm.app.services.parsistantImpl">
+                <level value="debug" />
+        </logger>
+        <logger name="com.ibm.app.services.util">
+                <level value="debug" />
+        </logger>
+        <logger name="com.ibm.app.services.ws.impl">
+                <level value="debug" />
+        </logger>
+        <logger name="com.ko.cds">
+                <level value="debug" />
+        </logger>
+
+        <logger name="com.ko.cds.report.metrics">
+                <level value="info" />
+        </logger>
+
+        <logger name="com.mchange.v2">
+            <level value="info"/>
+        </logger>
+
+        <logger name="javax.xml.bind">
+                <level value="info" />
+        </logger>
+
+
+        <logger name="org.springframework.jndi">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.springframework.core">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.springframework.beans">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.springframework.context">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.springframework.web">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.springframework.aop">
+                <level value="info" />
+        </logger>
+
+        <logger name="com.focus.rcl.crn.CrnFacade">
+                <level value="fatal" />
+        </logger>
+        <logger name="com.focus.ftl.util.Util">
+                <level value="error" />
+        </logger>
+
+        <logger name="org.opensaml">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.apache.xml.security">
+                <level value="info" />
+        </logger>
+
+        <logger name="org.apache">
+                <level value="info" />
+        </logger>
+
+
+        <logger name="com.focus">
+                <level value="info" />
+        </logger>
+
+        <logger name="httpclient">
+                <level value="info" />
+        </logger>
+
+
+        <root>
+                <priority value="INFO" />
+                <appender-ref ref="console"/>
+                <appender-ref ref="FILE_daily"/>
+                 <appender-ref ref="janrainforETL_schedular_Task"/>
+        </root>
+
+         <root level="debug">
+          <appender-ref ref="console"/>
+          <appender-ref ref="FILE_daily"/>
+          <appender-ref ref="janrainforETL_schedular_Task"/>
+          
+         </root>
+         <root level="" ></root>
+</configuration>

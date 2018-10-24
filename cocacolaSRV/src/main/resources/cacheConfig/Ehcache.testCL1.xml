@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache
+    xsi:noNamespaceSchemaLocation="ehcache.xsd"
+    updateCheck="true"
+    monitoring="autodetect"
+    dynamicConfig="true"
+    maxBytesLocalHeap="128M"    
+    >
+    <diskStore path="java.io.tmpdir/ehcache"/> 
+    
+   <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
+        properties="file=JGroupsCache.xml" />  
+    
+    
+    <!--  cache named ClientTransactionIds This cache contains a maximum in memory of 10000 elements, and will expire an element if it is idle for more than 5 minutes and lives for more than 10 minutes. If there are more than 10000 elements it will overflow to the disk cache, which in this configuration will go to wherever java.io.tmp is defined on your system. On a standard Linux system this will be /tmp" -->
+	<cache name="ClientTransactionIds"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU" 
+		   diskSpoolBufferSizeMB="200"
+		   maxEntriesLocalDisk="1000" 
+		    >
+		    <persistence strategy="localTempSwap"/>
+		    <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, replicatePuts=true,
+            replicateUpdates=true, replicateUpdatesViaCopy=false,
+            replicateRemovals=true" />   
+       
+      <bootstrapCacheLoaderFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoaderFactory"
+            properties="bootstrapAsynchronously=false" />  
+		    
+	</cache> 
+	<cache name="CDSAccountTypes"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU"
+		   diskSpoolBufferSizeMB="200"
+		   maxEntriesLocalDisk="1000" 
+		    >
+		    <persistence strategy="localTempSwap"/>
+		    <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, replicatePuts=true,
+            replicateUpdates=true, replicateUpdatesViaCopy=false,
+            replicateRemovals=true" />   
+       
+      <bootstrapCacheLoaderFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoaderFactory"
+            properties="bootstrapAsynchronously=false" />  
+	</cache> 
+	<cache name="CDSSessionIds"
+		   timeToLiveSeconds="600"
+		   timeToIdleSeconds="300" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU"
+		   diskSpoolBufferSizeMB="200"
+		   maxEntriesLocalDisk="1000" 
+		    >
+		    <persistence strategy="localTempSwap"/>
+		    <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, replicatePuts=true,
+            replicateUpdates=true, replicateUpdatesViaCopy=false,
+            replicateRemovals=true" />   
+       
+      <bootstrapCacheLoaderFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoaderFactory"
+            properties="bootstrapAsynchronously=false" />  
+	</cache>   
+	
+	<cache name="CDSMemberId"
+		   timeToLiveSeconds="0"
+		   timeToIdleSeconds="0" 
+		   eternal="false" 
+		   memoryStoreEvictionPolicy="LFU"
+		   diskSpoolBufferSizeMB="1024"
+		   maxEntriesLocalDisk="50000" 
+		    >
+		    <persistence strategy="localTempSwap"/>
+		    <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, replicatePuts=true,
+            replicateUpdates=true, replicateUpdatesViaCopy=false,
+            replicateRemovals=true" />   
+       
+      <bootstrapCacheLoaderFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoaderFactory"
+            properties="bootstrapAsynchronously=false" />  
+	</cache>   
+	
+    
+    
+ 
+</ehcache>

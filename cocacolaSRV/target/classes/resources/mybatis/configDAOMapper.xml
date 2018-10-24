@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.config.ConfigDAO">
+
+ <resultMap id="reasonCodeMapper" type="ReasonCode">
+    <result property="reasonCode" column="REASON_CD"/>
+ 	<result property="reasonDescription" column="REASON_DESC"/>
+ </resultMap>
+ 
+ 
+ <select id="getReasonCodes"  resultMap="reasonCodeMapper" useCache="false" flushCache="true">
+	select REASON_CD,REASON_DESC from REASON		   
+</select>
+
+ </mapper>

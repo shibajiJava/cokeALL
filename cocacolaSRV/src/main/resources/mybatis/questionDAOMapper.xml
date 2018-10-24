@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ko.cds.dao.question.QuestionDAO">
+
+
+	<update id="postQuestion">
+		MERGE INTO SURVEY_TRANS U
+		USING (VALUES (#{surveyId},#{memberId})) AS U2 (SURVEY_ID, MEMBER_ID)
+		ON (U.MEMBER_ID=U2.MEMBER_ID and U.SURVEY_ID=U2.SURVEY_ID)
+		WHEN MATCHED THEN
+		UPDATE
+		SET
+		U.SESSION_ID=#{sessionId},
+		U.QUESTION_ID=#{questionId},
+		U.SURVEY_DTM= CURRENT_TIMESTAMP,
+		U.ANSWER_ID=#{answerId}
+		WHEN NOT MATCHED THEN
+		INSERT VALUES
+		(#{sessionId},#{surveyId},#{memberId},#{questionId},#{answerId},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	</update>
+</mapper>	

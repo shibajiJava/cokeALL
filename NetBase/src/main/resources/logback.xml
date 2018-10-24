@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- its a local file -->
+
+<configuration>  
+ <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">  
+  
+  <encoder>  
+   <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>  
+  </encoder>  
+ </appender>  
+ 
+	
+	<appender name="FILE_daily" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<File>/apps/logs/netBaseLog/netBase.log</File>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/apps/logs/netBaseLog/netBase.%d{yyyy-MM-dd}.log</FileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>	
+			</rollingPolicy>
+			 
+			<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+			</encoder> 
+	</appender>
+	
+	
+    <appender name="ASYNC_FILE_daily" class="ch.qos.logback.classic.AsyncAppender">
+   		 <appender-ref ref="FILE_daily" />   		
+    </appender>
+	<logger name="com.ibm.app.services.appcontext">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.aspectServices">
+		<level value="debug" />
+	</logger>
+    <logger name="com.ibm.app.services.domain">
+        <level value="info" />
+    </logger>
+	<logger name="com.ibm.app.services.exception">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.interceptor">
+		<level value="debug" />
+	</logger>
+	
+	<logger name="com.ibm.app.services.parsistant">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.parsistantImpl">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.util">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ibm.app.services.ws.impl">
+		<level value="debug" />
+	</logger>
+	<logger name="com.ko.cds">
+		<level value="debug" />
+	</logger>
+	
+	<logger name="com.ko.cds.report.metrics">
+		<level value="info" />
+	</logger>
+	
+	<logger name="com.mchange.v2">
+	    <level value="info"/>
+	</logger>
+	
+	<logger name="javax.xml.bind">
+		<level value="info" />
+	</logger>
+	
+	
+	<logger name="org.springframework.jndi">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.context">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.aop">
+		<level value="info" />
+	</logger>
+
+	<logger name="com.focus.rcl.crn.CrnFacade">
+		<level value="fatal" />
+	</logger>
+	<logger name="com.focus.ftl.util.Util">
+		<level value="error" />
+	</logger>
+
+	<logger name="org.opensaml">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.apache.xml.security">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.apache">
+		<level value="info" />
+	</logger>
+
+	
+	<logger name="com.focus">
+		<level value="info" />
+	</logger>
+
+	<logger name="httpclient">
+		<level value="info" />
+	</logger> 
+	
+	<logger name="org.quartz">
+	    <level value="info" />
+	    <appender-ref ref="ASYNC_QuartzRLFA" />
+	</logger>
+	
+	<logger name="QuartzScheduler_org.springframework.scheduling.quartz">
+		<level value="info" />
+	</logger> 
+	
+	<!-- Log level changed for the SQL session close and open stmts When DEBUG it will show the stmts-->
+	<logger name="org.mybatis">
+		<level value="info" />
+	</logger>
+
+ 	<logger name="auditTrail" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_audit_trail"/>
+    </logger>
+ 
+    <logger name="schedularTask" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_schedular_Task"/>
+    </logger>
+   <logger name="pointsRollbackSchedularTask" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_points_rollback_schedular_Task"/>
+    </logger>
+    
+    <logger name="creditSACPointsTask" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_creditSACPoints_Task"/>
+    </logger>
+    <logger name="creditSACPointsFailures" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_creditSACPoints_Failures"/>
+    </logger>
+      <logger name="janrainCreateMemberTask" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_janrainCreateMember_Task"/>
+    </logger>
+ 
+	 <root level="debug">  
+	  <appender-ref ref="console"/>
+	  <appender-ref ref="ASYNC_FILE_daily"/>
+	 </root>  
+	
+</configuration>  
